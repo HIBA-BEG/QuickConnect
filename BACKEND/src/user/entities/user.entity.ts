@@ -43,9 +43,6 @@ export class User extends Document {
   @Prop({ default: Date.now })
   lastSeen: Date;
 
-  @Prop({ default: 0 })
-  rewardPoints: number;
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

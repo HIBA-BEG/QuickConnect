@@ -4,6 +4,10 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ChannelModule } from './channel/channel.module';
+import { MessageModule } from './message/message.module';
+import { NotificationModule } from './notification/notification.module';
+import { FriendRequestModule } from './friend-request/friend-request.module';
 
 @Module({
   imports: [
@@ -13,6 +17,10 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     UserModule,
+    ChannelModule,
+    MessageModule,
+    NotificationModule,
+    FriendRequestModule,
   ],
   controllers: [AppController],
   providers: [AppService],

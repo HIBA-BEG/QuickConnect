@@ -7,6 +7,9 @@ const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 `;
 
 const ChatHeader = styled.div`

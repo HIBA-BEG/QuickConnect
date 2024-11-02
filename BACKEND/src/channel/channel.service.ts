@@ -37,4 +37,16 @@ export class ChannelService {
     const channel = await response.save()
     return channel;
   }
+
+  async update(id:string , updateChannelDto:UpdateChannelDto):Promise<Channel>{
+    const channelUpdate = await this.channelModel.findByIdAndUpdate(id,updateChannelDto,{
+      new: true,
+      runValidators:true,
+    });
+    if(!channelUpdate){
+      throw new NotFoundException('channel not found')
+    }
+
+    return channelUpdate;
+  }
 }

@@ -1,26 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
+import { Channel } from './entities/channel.entity';
+import { User } from 'src/user/entities/user.entity';
+import { Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+
 
 @Injectable()
 export class ChannelService {
-  create(createChannelDto: CreateChannelDto) {
-    return 'This action adds a new channel';
-  }
 
-  findAll() {
-    return `This action returns all channel`;
-  }
+  constructor(
+    @InjectModel(Channel.name) private channelModel: Model<Channel>,
+    @InjectModel(User.name) private userModel: Model<User>,
+  ) { }
 
-  findOne(id: number) {
-    return `This action returns a #${id} channel`;
-  }
 
-  update(id: number, updateChannelDto: UpdateChannelDto) {
-    return `This action updates a #${id} channel`;
-  }
 
-  remove(id: number) {
-    return `This action removes a #${id} channel`;
+  async create(createChannelDto: CreateChannelDto): Promise<Channel> {
+    const { moderator } = createChannelDto;
+    
+    // type de id il faut etre ObjectId
+    if (moderator && !Types.ObjectId.isValid(moderator)) {
+      throw new BadRequestException(`Invalid moderator ID format`);
+    }
+
+    // verifier si le moderato existe :)
+    if (moderator) {
+      const isModeratorExists = await this.userModel.findById(moderator);
+
+      if (!isModeratorExists) {
+        throw new NotFoundException(`Moderator with ID ${moderator} not found`);
+      }
+    }
+    const response = await this.channelModel.create(createChannelDto);
+    const channel = await response.save()
+    return channel;
   }
 }

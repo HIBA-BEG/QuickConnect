@@ -114,7 +114,7 @@ export class ChannelService {
 
     const updateData = { ...updateChannelDto };
 
-    
+
     if (members) {
       updateData.members = memberDocs;
     }

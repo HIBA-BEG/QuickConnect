@@ -8,6 +8,7 @@ export enum ChannelType {
     PUBLIC = 'Public',
     CONVERSATION = 'Conversation',
 }
+
 export enum UserStatus {
     ONLINE = 'online',
     OFFLINE = 'offline',

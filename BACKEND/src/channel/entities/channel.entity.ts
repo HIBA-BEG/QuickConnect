@@ -9,6 +9,47 @@ export enum ChannelType {
     CONVERSATION = 'Conversation',
 }
 
+export enum UserStatus {
+    ONLINE = 'online',
+    OFFLINE = 'offline',
+    BUSY = 'busy',
+}
+
+//   ===============nested document of user==================
+@Schema()
+class Member {
+    @Prop({ required: true })
+    _id: string
+
+    @Prop({ required: true })
+    firstName: string;
+
+    @Prop({ required: true })
+    lastName: string;
+
+    @Prop({ required: true })
+    username: string;
+
+    @Prop({ required: true })
+    email: string;
+
+
+    @Prop()
+    profilePicture: string;
+
+    @Prop()
+    phoneNumber?: string;
+
+    @Prop({ type: String, enum: UserStatus, default: UserStatus.OFFLINE })
+    status: UserStatus;
+
+    @Prop({ default: Date.now })
+    lastSeen: Date;
+}
+
+const MemberSchema = SchemaFactory.createForClass(Member);
+
+// =====================channel schema=================
 @Schema({ timestamps: true })
 export class Channel extends Document {
 
@@ -18,8 +59,8 @@ export class Channel extends Document {
     @Prop()
     description: string;
 
-    @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
-    members: User[];
+    @Prop({ type: [MemberSchema],unique: false })
+    members: Member[];
 
     @Prop({ type: [{ type: Types.ObjectId, ref: 'Message' }] })
     messages: Message[];

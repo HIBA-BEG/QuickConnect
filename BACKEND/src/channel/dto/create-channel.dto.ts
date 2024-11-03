@@ -14,6 +14,10 @@ export class CreateChannelDto {
 
     @IsOptional()
     @IsArray()
+    members?: string[];
+    
+    @IsOptional()
+    @IsArray()
     bannedWords?: string[];
 
     @IsOptional()

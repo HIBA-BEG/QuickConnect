@@ -12,23 +12,23 @@ export class ChannelController {
     return this.channelService.create(createChannelDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.channelService.findAll();
-  // }
+  @Get()
+  findAll() {
+    return this.channelService.findAll();
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.channelService.findOne(+id);
-  // }
+  @Get(':id')
+  findById(@Param('id') id: string) {
+    return this.channelService.findById(id);
+  }
 
   @Put(':id')
   update(@Param('id') id: string, @Body(ValidationPipe) updateChannelDto: UpdateChannelDto) {
     return this.channelService.update(id, updateChannelDto);
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.channelService.remove(+id);
-  // }
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.channelService.delete(id);
+  }
 }

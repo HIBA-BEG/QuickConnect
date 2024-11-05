@@ -34,11 +34,13 @@ const GroupInfo = () => {
     { id: 5, name: 'Eve', role: 'User' },
   ];
 
+  
+
   return (
     <GroupInfoContainer>
       <Section>
-        <h3 className="font-bold text-xl">Group Info</h3>
-        <h4 className="font-bold">Files:</h4>
+      <h3 className="font-roboto-mono font-bold text-[30px] text-[#132C33]">Group Info</h3>
+      <h4 className="font-roboto-mono font-bold text-[20px] text-[#132C33]">Files:</h4>
         <Dropdown title="Image" />
         <DropdownVideo title="Video" />
         <DropdownVocale title="Vocale" />

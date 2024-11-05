@@ -61,7 +61,7 @@ const UsersGroup: React.FC<UsersGroupProps> = ({ users }) => {
 
   return (
     <UsersContainer>
-      <h1 className='font-bold'>{users.length} Members</h1>
+      <h1   className="font-roboto-mono font-bold text-[26px] leading-[42px] tracking-[0.05em] text-[#000000]">{users.length} Members</h1>
       {users.slice(0, 3).map((user: User) => (
         <div key={user.id} className='flex justify-between'>
             <p>{user.name}</p>

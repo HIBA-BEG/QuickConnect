@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { FaSearch, FaTrashAlt } from 'react-icons/fa';
+import React, { useState } from 'react';
 
 const Groups = styled.div`
   display: flex;
@@ -42,7 +43,7 @@ const Divider = styled.div`
   margin: 0 10px;
 `;
 
-const GroupItem = styled.div`
+const GroupItem = styled.div<{ active?: boolean }>`
   display: flex;
   align-items: center;
   margin-top: 10px;
@@ -50,10 +51,8 @@ const GroupItem = styled.div`
   border-radius: 5px 5px 0px 0px;
   border-bottom: 2px solid black;
   cursor: pointer;
+  background-color: ${({ active }) => (active ? '#DBDCFF' : 'transparent')}; 
   &:hover {
-    background-color: #ddd;
-  }
-  &.active {
     background-color: #ddd;
   }
 `;
@@ -71,7 +70,18 @@ const GroupInfo = styled.div`
   flex-direction: column;
 `;
 
-const AllChat = () => {
+interface AllChatProps {
+  onGroupSelect: (groupName: string) => void;
+}
+
+const AllChat: React.FC<AllChatProps> = ({ onGroupSelect }) => {
+  const [activeGroup, setActiveGroup] = useState<string | null>(null); 
+
+  const handleGroupSelect = (groupName: string) => {
+    setActiveGroup(groupName); 
+    onGroupSelect(groupName); 
+  };
+
   return (
     <Groups>
       <SearchBar>
@@ -84,27 +94,19 @@ const AllChat = () => {
           <FaTrashAlt size={18} />
         </IconWrapper>
       </SearchBar>
-      <GroupItem className="active">
-        <ProfileImage src="https://via.placeholder.com/40" alt="Group 1 Profile" />
-        <GroupInfo>
-          <h2>Group 1</h2>
-          <p>Last Message: Hello</p>
-        </GroupInfo>
-      </GroupItem>
-      <GroupItem>
-        <ProfileImage src="https://via.placeholder.com/40" alt="Group 2 Profile" />
-        <GroupInfo>
-          <h2>Group 2</h2>
-          <p>Last Message: How are you?</p>
-        </GroupInfo>
-      </GroupItem>
-      <GroupItem>
-        <ProfileImage src="https://via.placeholder.com/40" alt="Group 3 Profile" />
-        <GroupInfo>
-          <h2>Group 3</h2>
-          <p>Last Message: Goodbye</p>
-        </GroupInfo>
-      </GroupItem>
+      {['Group 1', 'Group 2', 'Group 3'].map((groupName, index) => (
+        <GroupItem
+          key={index}
+          onClick={() => handleGroupSelect(groupName)} 
+          active={activeGroup === groupName} 
+        >
+          <ProfileImage src="https://via.placeholder.com/40" alt={`${groupName} Profile`} />
+          <GroupInfo>
+            <h2>{groupName}</h2>
+            <p>Last Message: Hello</p>
+          </GroupInfo>
+        </GroupItem>
+      ))}
     </Groups>
   );
 };

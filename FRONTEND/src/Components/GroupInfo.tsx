@@ -16,10 +16,19 @@ const GroupInfoContainer = styled.div`
 `;
 
 const Section = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   height: fit-content;
   padding: 10px;
   background-color: white;
+  color: black;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+`;
+const Section2 = styled.div`
+  margin-bottom: 20px;
+  height: fit-content;
+  padding: 10px;
+  background-color: #DBDCFF;
   color: black;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -48,9 +57,9 @@ const GroupInfo = () => {
         <DropdownLinks title="Links" />
       </Section>
       
-      <Section>
+      <Section2>
         <UsersGroup users={users} />
-      </Section>
+      </Section2>
     </GroupInfoContainer>
   );
 };

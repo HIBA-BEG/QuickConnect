@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import AllChat from './AllGroupes';
 import { useState } from 'react';
+// import AllChatFiends from './AllFriends';
 
 const ChatContainer = styled.div`
   flex: 2;
@@ -88,7 +89,7 @@ const GroupesWithChat = styled.div`
   gap: 40px;
 `;
 
-const Chat = () => {
+const GroupesChat = () => {
   const [selectedGroup, setSelectedGroup] = useState('Group 1'); 
   const [messages, setMessages] = useState([
     { group: 'Group 1', text: 'Hello from Group 1' },
@@ -168,4 +169,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default GroupesChat;

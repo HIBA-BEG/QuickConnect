@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../../Api/Auth.service';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
 
     console.log({ email, password });
+
+    try {
+      const user = await loginUser(email);
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate('/users');
+    } catch (error) {
+      setError('Login failed. Please check your email and try again.');
+    }
   };
 
   return (
@@ -18,7 +30,7 @@ const Login: React.FC = () => {
           <div>
             <h2 className="text-3xl font-bold text-black mb-4">Welcome back</h2>
             <svg width="497" height="350" viewBox="0 0 497 350" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_66_121)">
+                <g clipPath="url(#clip0_66_121)">
                 <path d="M192.152 31.6202H131.854C129.785 31.6202 128.102 29.8389 128.102 27.6496C128.102 25.4602 129.785 23.679 131.854 23.679H192.152C194.221 23.679 195.904 25.4602 195.904 27.6496C195.904 29.8389 194.221 31.6202 192.152 31.6202Z" fill="#B3B3B3"/>
                 <path d="M239.209 45.0594H131.854C129.785 45.0594 128.102 43.2781 128.102 41.0888C128.102 38.8994 129.785 37.1182 131.854 37.1182H239.209C241.277 37.1182 242.96 38.8994 242.96 41.0888C242.96 43.2781 241.277 45.0594 239.209 45.0594Z" fill="#B3B3B3"/>
                 <path d="M239.209 58.3773H131.854C129.785 58.3773 128.102 56.596 128.102 54.4067C128.102 52.2173 129.785 50.436 131.854 50.436H239.209C241.277 50.436 242.96 52.2173 242.96 54.4067C242.96 56.596 241.277 58.3773 239.209 58.3773Z" fill="#E6E7E8"/>
@@ -94,6 +106,7 @@ const Login: React.FC = () => {
             </p>
 
           </div>
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </div>
       </div>
     </div>

@@ -1,14 +1,36 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { registerUser } from '../../Api/Auth.service';
 
 const SignUp: React.FC = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    email: '',
+  });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ name, email, password });
+    setError('');
+
+    console.log( formData );
+    try {
+      const user = await registerUser(formData);
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate('/users');
+    } catch (error) {
+      setError('Registration failed. Please try again.');
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   return (
@@ -18,7 +40,7 @@ const SignUp: React.FC = () => {
           <div>
             <h2 className="text-3xl font-bold text-black mb-4">Create an Account</h2>
             <svg width="400" height="400" viewBox="0 0 525 531" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_66_28)">
+                <g clipPath="url(#clip0_66_28)">
                 <path d="M117.749 88.6777L113.747 109.662L133.702 115.28L131.222 92.8768L117.749 88.6777Z" fill="#A0616A"/>
                 <path d="M0 523.054C0 523.713 0.530363 524.243 1.19081 524.243H523.809C524.47 524.243 525 523.713 525 523.054C525 522.394 524.47 521.865 523.809 521.865H1.19081C0.530363 521.865 0 522.394 0 523.054Z" fill="#3F3D56"/>
                 <path d="M356.262 238.131H150.463C127.126 238.131 108.207 257.024 108.207 280.329V479.613C108.207 502.918 127.126 521.811 150.463 521.811H356.262C379.599 521.811 398.518 502.918 398.518 479.613V280.329C398.518 257.023 379.599 238.131 356.262 238.131Z" fill="white"/>
@@ -82,22 +104,48 @@ const SignUp: React.FC = () => {
           <h2 className="text-2xl font-bold text-white mb-6">Sign Up</h2>
           <form onSubmit={handleSignUp} className="space-y-4">
             <div>
-              <label className="block text-white mb-1">Name</label>
+              <label className="block text-white mb-1">First Name</label>
               <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
                 className="w-[400px] px-4 py-2 rounded-md bg-[#333333] text-white border border-gray-600 focus:outline-none focus:border-indigo-500"
                 required
-                placeholder="Your name"
+                placeholder="First name"
+              />
+            </div>
+            <div>
+              <label className="block text-white mb-1">Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                className="w-[400px] px-4 py-2 rounded-md bg-[#333333] text-white border border-gray-600 focus:outline-none focus:border-indigo-500"
+                required
+                placeholder="Last name"
+              />
+            </div>
+            <div>
+              <label className="block text-white mb-1">Username</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="w-[400px] px-4 py-2 rounded-md bg-[#333333] text-white border border-gray-600 focus:outline-none focus:border-indigo-500"
+                required
+                placeholder="Username"
               />
             </div>
             <div>
               <label className="block text-white mb-1">Email</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 className="w-full px-4 py-2 rounded-md bg-[#333333] text-white border border-gray-600 focus:outline-none focus:border-indigo-500"
                 required
                 placeholder="example@example.com"
@@ -107,8 +155,7 @@ const SignUp: React.FC = () => {
               <label className="block text-white mb-1">Password</label>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
                 className="w-full px-4 py-2 rounded-md bg-[#333333] text-white border border-gray-600 focus:outline-none focus:border-indigo-500"
                 required
                 placeholder="************"

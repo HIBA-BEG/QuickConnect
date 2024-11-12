@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -11,6 +13,7 @@ import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create.dto';
 import { UpdateUserDto } from './dto/update.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('user')
 export class UserController {
@@ -27,6 +30,30 @@ export class UserController {
     user: CreateUserDto,
   ): Promise<User> {
     return this.userService.create(user);
+  }
+
+  @Post('/login')
+  async login(
+    @Body()
+    loginDto: LoginDto,
+  ): Promise<User> {
+    return this.userService.login(loginDto);
+  }
+
+  
+  @Post('/logout')
+  async logout(
+    @Body('userId') userId: string,
+  ): Promise<{ message: string }> {
+    try {
+      await this.userService.logout(userId);
+      return { message: 'Logged out successfully' };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Logout failed',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get(':id')

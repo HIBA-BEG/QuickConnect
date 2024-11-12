@@ -1,5 +1,7 @@
 import { FaUser, FaSignOutAlt } from 'react-icons/fa';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { logoutUser } from '../Api/Auth.service';
 
 const SidebarContainer = styled.div`
   width: 100px;
@@ -54,7 +56,35 @@ const StyledParagraph = styled.p`
   margin: 0; 
 `;
 
-const Sidebar = () => {
+const Sidebar: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const userData = localStorage.getItem('user');
+      if (!userData) {
+        console.error('No user data found');
+        navigate('/');
+        return;
+      }
+
+      const user = JSON.parse(userData);
+      if (!user._id) {
+        console.error('Invalid user data');
+        localStorage.removeItem('user');
+        navigate('/');
+        return;
+      }
+
+      await logoutUser(user._id);
+      localStorage.removeItem('user');
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      localStorage.removeItem('user');
+      navigate('/');
+    }
+  };
   return (
     <SidebarContainer>
       <Logo>Logo</Logo>
@@ -113,7 +143,7 @@ const Sidebar = () => {
 <StyledParagraph>Profile</StyledParagraph>
          
         </ProfileIcon>
-      <LogoutButton>
+      <LogoutButton onClick={handleLogout}>
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
             <rect width="40" height="40" fill="url(#pattern0_19_4)"/>
             <defs>

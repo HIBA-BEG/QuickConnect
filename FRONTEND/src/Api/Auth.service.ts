@@ -2,6 +2,12 @@ const apiUrl  = 'http://localhost:3001';
 
 // console.log(apiUrl);
 
+export enum UserStatus {
+  ONLINE = 'online',
+  OFFLINE = 'offline',
+  BUSY = 'busy',
+}
+
 export interface User {
   _id: string;
   firstName: string;
@@ -10,7 +16,7 @@ export interface User {
   email: string;
   profilePicture?: string;
   phoneNumber?: string;
-  status: 'online' | 'offline' | 'busy';
+  status: UserStatus;
 }
 
 export const loginUser = async (email: string): Promise<User> => {

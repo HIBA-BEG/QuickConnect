@@ -11,6 +11,7 @@ import { FriendRequestModule } from './friend-request/friend-request.module';
 import { BanListModule } from './ban-list/ban-list.module';
 import { RatingModule } from './rating/rating.module';
 import { RewardModule } from './reward/reward.module';
+import { VideoCallGateway } from './video-call/video-call.gateway';
 
 @Module({
   imports: [
@@ -29,6 +30,6 @@ import { RewardModule } from './reward/reward.module';
     RewardModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,VideoCallGateway],
 })
 export class AppModule {}

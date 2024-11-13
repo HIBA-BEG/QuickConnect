@@ -1,70 +1,93 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
+let peerConnection : RTCPeerConnection | null;
 const VideoCall: React.FC = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [roomId, setRoomId] = useState('');
   const [isRoomJoined, setIsRoomJoined] = useState(false);
-  const peerConnection = useRef<RTCPeerConnection | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (!isRoomJoined) return;
-
+  
     const socketInstance = io('http://localhost:3000');
     setSocket(socketInstance);
-
-    peerConnection.current = new RTCPeerConnection({
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+  
+    peerConnection = new RTCPeerConnection({
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+      ],
     });
-
+  
     socketInstance.emit('join', roomId);
-
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
-      stream.getTracks().forEach((track) => peerConnection.current?.addTrack(track, stream));
-    });
-
+    startMediaStream();
+  
     socketInstance.on('offer', async (sdp) => {
-      if (!peerConnection.current) return;
-      await peerConnection.current.setRemoteDescription(new RTCSessionDescription(sdp));
-      const answer = await peerConnection.current.createAnswer();
-      await peerConnection.current.setLocalDescription(answer);
-      socketInstance.emit('answer', { sdp: answer, roomId });
+      if (!peerConnection) return;
+      try {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        socketInstance.emit('answer', { sdp: answer, roomId });
+      } catch (error) {
+        console.error("Failed to set remote description or create answer:", error);
+      }
     });
-
+  
     socketInstance.on('answer', async (sdp) => {
-      await peerConnection.current?.setRemoteDescription(new RTCSessionDescription(sdp));
+      if (!peerConnection) return;
+      try {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
+      } catch (error) {
+        console.error("Failed to set remote description on answer:", error);
+      }
     });
-
-    peerConnection.current.onicecandidate = (event) => {
+  
+    peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         socketInstance.emit('ice-candidate', { candidate: event.candidate, roomId });
       }
     };
-
+  
     socketInstance.on('ice-candidate', async (candidate) => {
-      await peerConnection.current?.addIceCandidate(new RTCIceCandidate(candidate));
+      if (peerConnection?.remoteDescription) {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      }
     });
-
-    peerConnection.current.ontrack = (event) => {
+  
+    peerConnection.ontrack = (event) => {
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = event.streams[0];
       }
     };
-
+  
     socketInstance.on('user-joined', async () => {
-      if (!peerConnection.current) return;
-      const offer = await peerConnection.current.createOffer();
-      await peerConnection.current.setLocalDescription(offer);
+      if (!peerConnection) return;
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
       socketInstance.emit('offer', { sdp: offer, roomId });
     });
-
+  
     return () => {
       socketInstance.disconnect();
+      peerConnection?.close();
     };
   }, [roomId, isRoomJoined]);
+  
+
+  const startMediaStream = () => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+      stream.getTracks().forEach((track) => peerConnection?.addTrack(track, stream));
+    }).catch((error) => {
+      console.error("Error accessing media devices.", error);
+      alert("Could not access media devices.");
+    });
+  };
 
   const joinRoom = () => {
     if (roomId.trim()) {

@@ -1,132 +1,122 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
+import Peer, { MediaConnection } from 'peerjs';
+import io from 'socket.io-client';
 
-let peerConnection : RTCPeerConnection | null;
-const VideoCall: React.FC = () => {
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [roomId, setRoomId] = useState('');
-  const [isRoomJoined, setIsRoomJoined] = useState(false);
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+const socket = io('http://localhost:3000'); 
+
+const VideoCall = () => {
+  const [peerId, setPeerId] = useState(''); 
+  const [remotePeerId, setRemotePeerId] = useState('');
+  const [incomingCall, setIncomingCall] = useState<MediaConnection | null>(null); 
+  const [currentCall, setCurrentCall] = useState<MediaConnection | null>(null); 
+  const myVideo = useRef<HTMLVideoElement>(null);
+  const peerVideo = useRef<HTMLVideoElement>(null);
+  const peerInstance = useRef<Peer>();
 
   useEffect(() => {
-    if (!isRoomJoined) return;
-  
-    const socketInstance = io('http://localhost:3000');
-    setSocket(socketInstance);
-  
-    peerConnection = new RTCPeerConnection({
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
-      ],
-    });
-  
-    socketInstance.emit('join', roomId);
-    startMediaStream();
-  
-    socketInstance.on('offer', async (sdp) => {
-      if (!peerConnection) return;
-      try {
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
-        const answer = await peerConnection.createAnswer();
-        await peerConnection.setLocalDescription(answer);
-        socketInstance.emit('answer', { sdp: answer, roomId });
-      } catch (error) {
-        console.error("Failed to set remote description or create answer:", error);
-      }
-    });
-  
-    socketInstance.on('answer', async (sdp) => {
-      if (!peerConnection) return;
-      try {
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
-      } catch (error) {
-        console.error("Failed to set remote description on answer:", error);
-      }
-    });
-  
-    peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        socketInstance.emit('ice-candidate', { candidate: event.candidate, roomId });
-      }
-    };
-  
-    socketInstance.on('ice-candidate', async (candidate) => {
-      if (peerConnection?.remoteDescription) {
-        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-      }
-    });
-  
-    peerConnection.ontrack = (event) => {
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = event.streams[0];
-      }
-    };
-  
-    socketInstance.on('user-joined', async () => {
-      if (!peerConnection) return;
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-      socketInstance.emit('offer', { sdp: offer, roomId });
-    });
-  
-    return () => {
-      socketInstance.disconnect();
-      peerConnection?.close();
-    };
-  }, [roomId, isRoomJoined]);
-  
+    const peer = new Peer();
+    peerInstance.current = peer;
 
-  const startMediaStream = () => {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
-      stream.getTracks().forEach((track) => peerConnection?.addTrack(track, stream));
-    }).catch((error) => {
-      console.error("Error accessing media devices.", error);
-      alert("Could not access media devices.");
+    peer.on('open', id => {
+      setPeerId(id);
+      socket.emit('join-room', { id });
+    });
+
+    peer.on('call', call => {
+      setIncomingCall(call); 
+    });
+
+  }, []);
+
+  const startVideo = () => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+      if (myVideo.current) {
+        myVideo.current.srcObject = stream;
+      }
     });
   };
 
-  const joinRoom = () => {
-    if (roomId.trim()) {
-      setIsRoomJoined(true);
+  const callUser = () => {
+    if (peerInstance.current && remotePeerId) {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+        if (myVideo.current) {
+          myVideo.current.srcObject = stream;
+        }
+
+        const call = peerInstance.current?.call(remotePeerId, stream);
+        if (call) {
+          setCurrentCall(call); 
+
+        
+          call.on('stream', remoteStream => {
+            if (peerVideo.current) {
+              peerVideo.current.srcObject = remoteStream;
+            }
+          });
+        }
+      });
     } else {
-      alert('Please enter a valid room ID.');
+      alert("Enter a valid remote peer ID to call.");
+    }
+  };
+
+  const acceptCall = () => {
+    if (incomingCall) {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+        if (myVideo.current) {
+          myVideo.current.srcObject = stream;
+        }
+        incomingCall.answer(stream); 
+        setCurrentCall(incomingCall); 
+
+        incomingCall.on('stream', remoteStream => {
+          if (peerVideo.current) {
+            peerVideo.current.srcObject = remoteStream;
+          }
+        });
+      });
+      setIncomingCall(null); 
+    }
+  };
+
+  const refuseCall = () => {
+    setIncomingCall(null); 
+  };
+
+  const endCall = () => {
+    if (currentCall) {
+      currentCall.close(); 
+      setCurrentCall(null); 
+
+      if (myVideo.current) myVideo.current.srcObject = null;
+      if (peerVideo.current) peerVideo.current.srcObject = null;
     }
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-4">
-      {!isRoomJoined ? (
-        <div className="flex flex-col items-center space-y-2">
-          <input
-            type="text"
-            placeholder="Enter Room ID"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-            className="border border-gray-300 p-2 rounded-md"
-          />
-          <button onClick={joinRoom} className="bg-blue-500 text-white px-4 py-2 rounded-md">
-            Join Room
-          </button>
-        </div>
-      ) : (
-        <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 p-4">
-          <video
-            className="w-full md:w-1/2 max-w-md border-2 border-gray-300 rounded-md shadow-md"
-            ref={localVideoRef}
-            autoPlay
-            muted
-          />
-          <video
-            className="w-full md:w-1/2 max-w-md border-2 border-gray-300 rounded-md shadow-md"
-            ref={remoteVideoRef}
-            autoPlay
-          />
+    <div>
+      <h3>Your ID: {peerId}</h3>
+      <button onClick={startVideo}>Start Video</button>
+
+      {incomingCall && (
+        <div>
+          <p>Incoming Call...</p>
+          <button onClick={acceptCall}>Accept</button>
+          <button onClick={refuseCall}>Refuse</button>
         </div>
       )}
+      
+      <input
+        type="text"
+        placeholder="Enter Remote Peer ID"
+        value={remotePeerId}
+        onChange={e => setRemotePeerId(e.target.value)}
+      />
+      <button onClick={callUser}>Call</button>
+      <button onClick={endCall} disabled={!currentCall}>End Call</button>
+
+      <video ref={myVideo} autoPlay muted />
+      <video ref={peerVideo} autoPlay />
     </div>
   );
 };

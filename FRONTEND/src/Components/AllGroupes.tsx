@@ -40,9 +40,10 @@ const GroupInfo = styled.div`
 
 interface AllChatProps {
   onGroupSelect: (groupName: string) => void;
+  currentUserId: string;
 }
 
-const AllChat: React.FC<AllChatProps> = ({ onGroupSelect }) => {
+const AllChat: React.FC<AllChatProps> = ({ onGroupSelect, currentUserId }) => {
   const [activeGroup, setActiveGroup] = useState<string | null>(null); 
 
   const handleGroupSelect = (groupName: string) => {
@@ -52,7 +53,7 @@ const AllChat: React.FC<AllChatProps> = ({ onGroupSelect }) => {
 
   return (
     <Groups>
-      <SearchBarComponent />
+      <SearchBarComponent currentUserId={currentUserId} />
       {['Group 1', 'Group 2', 'Group 3'].map((groupName, index) => (
         <GroupItem
           key={index}

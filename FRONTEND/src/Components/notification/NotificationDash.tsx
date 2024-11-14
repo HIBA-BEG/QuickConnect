@@ -48,7 +48,11 @@ const ToggleButton = styled.button`
   }
 `;
 
-const NotificationPage: React.FC = () => {
+interface NotificationPageProps {
+  currentUserId: string;
+}
+
+const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) => {
   const notifications = [
     { type: 'Joined New User',sender:"Brahim oubourih", message: " a envoyer une demande d'amis", timestamp: '24 Nov 2024 at 9:20 AM' },
     { type: 'Message',sender:"Brahim oubourih", message: "a envoyer une nouvelle message", timestamp: '24 Nov 2024 at 9:20 AM' },
@@ -75,9 +79,9 @@ const NotificationPage: React.FC = () => {
         {isGroupChat ? 'Switch to Friends Chat' : 'Switch to Group Chat'}
     </ToggleButton>
       {isGroupChat? (
-        <AllChatFiends onFriendselect={handleFriendSelect} />
+        <AllChatFiends onFriendselect={handleFriendSelect} currentUserId={currentUserId} />
       ) : (
-        <AllChat onGroupSelect={handleGroupSelect}/>
+        <AllChat onGroupSelect={handleGroupSelect} currentUserId={currentUserId} />
       )}
 
   <NotificationContainer>

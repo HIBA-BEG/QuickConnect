@@ -1,11 +1,11 @@
 const apiUrl = 'http://localhost:3001';
 
 export enum UserStatus {
-    ONLINE = 'online',
-    OFFLINE = 'offline',
-    BUSY = 'busy',
-  }
-  
+  ONLINE = 'online',
+  OFFLINE = 'offline',
+  BUSY = 'busy',
+}
+
 export interface User {
   _id: string;
   name: string;
@@ -39,6 +39,44 @@ export const userService = {
       return response.json();
     } catch (error) {
       console.error('Error fetching user:', error);
+      throw error;
+    }
+  },
+
+  sendFriendRequest: async (toUserId: string): Promise<void> => {
+    const token = localStorage.getItem('token');
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    const fromUserId = userData._id;
+
+    console.log('Request payload:', {
+      from: fromUserId,
+      to: toUserId,
+    });
+
+    try {
+      const response = await fetch(`${apiUrl}/friend-request`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: fromUserId,
+          to: toUserId
+        }),
+      });
+
+      const responseData = await response.json();
+
+      console.log("responseData: ",responseData);
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to send friend request');
+      }
+
+      return responseData; 
+    } catch (error) {
+      console.error('Error sending friend request:', error);
       throw error;
     }
   }

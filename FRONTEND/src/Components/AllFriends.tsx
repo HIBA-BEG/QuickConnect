@@ -40,9 +40,10 @@ const GroupInfo = styled.div`
 
 interface AllChatProps {
   onFriendselect: (FriendName: string) => void;
+  currentUserId: string;
 }
 
-const AllChatFiends: React.FC<AllChatProps> = ({ onFriendselect }) => {
+const AllChatFiends: React.FC<AllChatProps> = ({ onFriendselect, currentUserId }) => {
   const [activeGroup, setActiveGroup] = useState<string | null>(null); 
 
   const handleFriendselect = (FriendName: string) => {
@@ -52,7 +53,7 @@ const AllChatFiends: React.FC<AllChatProps> = ({ onFriendselect }) => {
 
   return (
     <Friends>
-      <SearchBarComponent />
+      <SearchBarComponent currentUserId={currentUserId} />
       {['Friend 1', 'Friend 2', 'Friend 3'].map((FriendName, index) => (
         <FriendItem
           key={index}

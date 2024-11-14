@@ -4,29 +4,15 @@ import logo from '../../profileicon.jpg'
 interface props {
     firstName: string;
     lastName: string;
-    status: string;
 }
 
-export default function Members({ firstName, lastName, status }: props) {
+export default function Members({ firstName, lastName }: props) {
+    
     return (
         <div className='ml-3 mt-4 flex items-center w-[300px] h-13 gap-2  '>
 
             <div className='w-12 h-12'>
-                {status === 'online' &&
-
-                    <div className='absolute right-[23%] top-[61%] w-3 h-3 rounded-full bg-green-600'></div>
-                }
-                {status === 'busy' &&
-
-                    <div className='absolute right-[23%] top-[61%] w-3 h-3 rounded-full bg-red-600'></div>
-                }
-                {status === 'offline' &&
-
-                    <div className='absolute right-[23%] top-[61%] w-3 h-3 rounded-full bg-gray-600'></div>
-                }
-
-
-
+               
                 <img src={logo} className='rounded-md' alt="" />
             </div>
             <div className='w-60 h-10 text-gray-800 '>

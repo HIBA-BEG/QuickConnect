@@ -11,7 +11,7 @@ import { Channel, MembersType } from "../../Types/Channel";
 export default function IndexChannel() {
     const [showAddForm, setShowAddForm] = useState(false)
     const [members, setMembers] = useState<MembersType[]>([]);
-    // console.log(members);
+    console.log(members);
 
 
     const channelContext = useContext(ChannelContext);
@@ -61,7 +61,6 @@ export default function IndexChannel() {
                         <div className="w-full  flex flex-col  items-center overflow-y-auto h-72 overflow-auto">
                             {channels.map((item: Channel, index: number) => (
                                 <div key={index} onClick={() => setMembers(item.members)} className='cursor-pointer'>
-
                                     <Groups name={item.name} />
                                 </div>
 
@@ -81,7 +80,8 @@ export default function IndexChannel() {
                         <div className="w-full  flex flex-col  items-center overflow-y-auto h-72 overflow-auto">
 
                             {members.map((member, index) => (
-                                <Members key={index} firstName={member.firstName} lastName={member.lastName} status={member.status} />
+                                
+                                <Members key={index} firstName={member.firstName} lastName={member.lastName} />
                             ))}
                         </div>
 

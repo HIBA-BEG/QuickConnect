@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
-import { FiSearch  } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 
 import styled from 'styled-components';
 import UserSearchPopup from './UserSearchPopup';
@@ -39,16 +39,18 @@ const Divider = styled.div`
   margin: 0 10px;
 `;
 
+interface SearchBarComponentProps {
+    currentUserId: string;
+}
 
-
-const SearchBarComponent: React.FC = () => {
+const SearchBarComponent: React.FC<SearchBarComponentProps> = ({ currentUserId }) => {
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     return (
         <>
             <SearchBar onClick={() => setIsPopupOpen(true)}>
                 <IconWrapper>
-                    <FiSearch  size={25} />
+                    <FiSearch size={25} />
                 </IconWrapper>
                 <Input
                     type="text"
@@ -62,7 +64,10 @@ const SearchBarComponent: React.FC = () => {
             </SearchBar>
 
             {isPopupOpen && (
-                <UserSearchPopup onClose={() => setIsPopupOpen(false)} />
+                <UserSearchPopup
+                    onClose={() => setIsPopupOpen(false)}
+                    currentUserId={currentUserId}
+                />
             )}
         </>
     );

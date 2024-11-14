@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaUserPlus } from 'react-icons/fa';
 import { FiSearch } from 'react-icons/fi';
 import { userService } from '../Api/User.service';
 import defaultProfileIcon from '../profileicon.jpg';
+import Swal from 'sweetalert2';
 
 
 const PopupOverlay = styled.div`
@@ -79,11 +80,28 @@ const CloseButton = styled.button`
   font-size: 20px;
 `;
 
+const AddFriendButton = styled.button`
+  background: #7577ED;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  
+  &:hover {
+    background: #5557cd;
+  }
+`;
+
 interface UserSearchPopupProps {
     onClose: () => void;
+    currentUserId: string;
 }
 
-const UserSearchPopup: React.FC<UserSearchPopupProps> = ({ onClose }) => {
+const UserSearchPopup: React.FC<UserSearchPopupProps> = ({ onClose, currentUserId }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [users, setUsers] = useState<any[]>([]);
     const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
@@ -92,15 +110,16 @@ const UserSearchPopup: React.FC<UserSearchPopupProps> = ({ onClose }) => {
         const fetchUsers = async () => {
             try {
                 const data = await userService.getAllUsers();
-                setUsers(data);
-                setFilteredUsers(data);
+                const filteredData = data.filter(user => user._id !== currentUserId);
+                setUsers(filteredData);
+                setFilteredUsers(filteredData);
             } catch (error) {
                 console.error('Error fetching users:', error);
             }
         };
 
         fetchUsers();
-    }, []);
+    }, [currentUserId]);
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const term = e.target.value;
@@ -112,6 +131,43 @@ const UserSearchPopup: React.FC<UserSearchPopupProps> = ({ onClose }) => {
             user.firstName.toLowerCase().includes(term.toLowerCase())
         );
         setFilteredUsers(filtered);
+    };
+
+    const [pendingRequests, setPendingRequests] = useState<Set<string>>(new Set());
+
+    const handleAddFriend = async (userId: string) => {
+        try {
+            if (pendingRequests.has(userId)) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Already Sent',
+                    text: 'Friend request already sent',
+                    confirmButtonColor: '#7577ED'
+                });
+                return;
+            }
+
+            console.log('Sending friend request to:', userId);
+
+            const response = await userService.sendFriendRequest(userId);
+            console.log('Friend request response:', response);
+
+            setPendingRequests(prev => new Set(prev).add(userId));
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Friend request sent successfully!',
+                confirmButtonColor: '#7577ED'
+            });
+        } catch (error) {
+            console.error('Error sending friend request:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Failed to send friend request. Please try again.',
+                confirmButtonColor: '#7577ED'
+            });
+        }
     };
 
     return (
@@ -129,7 +185,7 @@ const UserSearchPopup: React.FC<UserSearchPopupProps> = ({ onClose }) => {
                         onChange={handleSearch}
                         autoFocus
                     />
-                    <FiSearch size={25} style={{ marginRight: '10px' , color: '#7577ED', fontWeight: 'semibold'}} />
+                    <FiSearch size={25} style={{ marginRight: '10px', color: '#7577ED', fontWeight: 'semibold' }} />
                 </SearchInput>
 
                 <UserList>
@@ -140,10 +196,27 @@ const UserSearchPopup: React.FC<UserSearchPopupProps> = ({ onClose }) => {
                                 alt={user.lastName}
                                 style={{ width: 50, height: 50, borderRadius: '20%', marginRight: 10 }}
                             />
-                            <div>
+                            <div style={{ flex: 1 }}>
                                 <div>{user.username}</div>
                                 <div style={{ fontSize: '0.8em', color: '#666' }}>{user.lastName} {user.firstName}</div>
                             </div>
+                            <AddFriendButton onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddFriend(user._id);
+                            }}
+                                disabled={pendingRequests.has(user._id)}
+                                style={{
+                                    backgroundColor: pendingRequests.has(user._id) ? '#ccc' : '#7577ED'
+                                }}
+                            >
+                                {pendingRequests.has(user._id) ? (
+                                    'Request Sent'
+                                ) : (
+                                    <>
+                                        <FaUserPlus /> Add Friend
+                                    </>
+                                )}
+                            </AddFriendButton>
                         </UserItem>
                     ))}
                 </UserList>

@@ -6,6 +6,8 @@ import Notification from './pages/Users/Notification';
 import Nopage from './pages/notFound/NoPage';
 import ProtectedRoute from './Utils/ProtectedRoute';
 import VideoCall from './Components/VideoCall';
+import IndexChannel from './pages/Channel/IndexChannel';
+import ChannelProvider from './Contexts/ChannelContext';
 
 function App() {
   return (
@@ -17,7 +19,7 @@ function App() {
           path="/users"
           element={
             <ProtectedRoute>
-                <Main />
+              <Main />
             </ProtectedRoute>
           }
         />
@@ -25,10 +27,13 @@ function App() {
           path="/Notifications"
           element={
             <ProtectedRoute>
-                <Notification />
+              <Notification />
             </ProtectedRoute>
           }
         />
+       
+          <Route path="/channel" element={ <ChannelProvider><IndexChannel />  </ChannelProvider>} />
+      
         {/* <Route path="/users" element={<Main />} /> */}
         <Route path="/video" element={<VideoCall />} /> 
         <Route path="*" element={<Nopage />} />

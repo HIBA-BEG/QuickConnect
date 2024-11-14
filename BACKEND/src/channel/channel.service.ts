@@ -42,15 +42,26 @@ export class ChannelService {
 
   // ==========================update===================
   async update(id: string, updateChannelDto: UpdateChannelDto): Promise<Channel> {
-  
+    
+    const existingChannel = await this.channelModel.findById(id);
+    
+
+    const currentMembers = existingChannel.members || [];
+    const newMembers = updateChannelDto.members || [];
+    
+    
+    const updatedMembers = Array.from(new Set([...currentMembers, ...newMembers]));
+
+   
     const channelUpdate = await this.channelModel.findByIdAndUpdate(
-      id,
-      updateChannelDto,
-      { new: true, runValidators: true }
+        id,
+        { ...updateChannelDto, members: updatedMembers },
+        { new: true, runValidators: true }
     );
- 
+
     return channelUpdate;
-  }
+}
+
 
   // ==================find by id=====================
   async findById(id: string): Promise<Channel> {

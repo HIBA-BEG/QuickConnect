@@ -5,6 +5,7 @@ import SignUp from './pages/auth/register';
 import Notification from './pages/Users/Notification';
 import Nopage from './pages/notFound/NoPage';
 import ProtectedRoute from './Utils/ProtectedRoute';
+import VideoCall from './Components/VideoCall';
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
           }
         />
         {/* <Route path="/users" element={<Main />} /> */}
-        {/* <Route path="/Notifications" element={<Notification />} /> */}
+        <Route path="/video" element={<VideoCall />} /> 
         <Route path="*" element={<Nopage />} />
       </Routes>
     </Router>

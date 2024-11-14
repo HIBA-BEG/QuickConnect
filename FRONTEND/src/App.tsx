@@ -5,6 +5,8 @@ import SignUp from './pages/auth/register';
 import Notification from './pages/Users/Notification';
 import Nopage from './pages/notFound/NoPage';
 import ProtectedRoute from './Utils/ProtectedRoute';
+import IndexChannel from './pages/Channel/IndexChannel';
+import ChannelProvider from './Contexts/ChannelContext';
 
 function App() {
   return (
@@ -16,7 +18,7 @@ function App() {
           path="/users"
           element={
             <ProtectedRoute>
-                <Main />
+              <Main />
             </ProtectedRoute>
           }
         />
@@ -24,10 +26,13 @@ function App() {
           path="/Notifications"
           element={
             <ProtectedRoute>
-                <Notification />
+              <Notification />
             </ProtectedRoute>
           }
         />
+       
+          <Route path="/channel" element={ <ChannelProvider><IndexChannel />  </ChannelProvider>} />
+      
         {/* <Route path="/users" element={<Main />} /> */}
         {/* <Route path="/Notifications" element={<Notification />} /> */}
         <Route path="*" element={<Nopage />} />

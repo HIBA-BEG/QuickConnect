@@ -7,11 +7,14 @@ import Members from '../../Components/channelComponents/Members';
 import AddForm from '../../Components/channelComponents/AddForm';
 import { ChannelContext } from '../../Contexts/ChannelContext'
 import { Channel, MembersType } from "../../Types/Channel";
+import userGroupIcon from '../../user-group.png'
+
 
 export default function IndexChannel() {
     const [showAddForm, setShowAddForm] = useState(false)
     const [members, setMembers] = useState<MembersType[]>([]);
-    console.log(members);
+    const [channelInfo, setChannelInfo] = useState<Channel[]>([]);
+
 
 
     const channelContext = useContext(ChannelContext);
@@ -42,7 +45,7 @@ export default function IndexChannel() {
                     </div>
                     <div className='w-[100%]'>
 
-                        {showAddForm ? <AddForm /> : <ChannelInfo />}
+                        {showAddForm ? <AddForm /> : <ChannelInfo channelInfo={channelInfo} />}
 
                     </div>
 
@@ -60,7 +63,14 @@ export default function IndexChannel() {
 
                         <div className="w-full  flex flex-col  items-center overflow-y-auto h-72 overflow-auto">
                             {channels.map((item: Channel, index: number) => (
-                                <div key={index} onClick={() => setMembers(item.members)} className='cursor-pointer'>
+                                <div
+                                    key={index}
+                                    onClick={() => {
+                                        setMembers(item.members);
+                                        setChannelInfo([item])
+                                    }}
+                                    className='cursor-pointer'>
+
                                     <Groups name={item.name} />
                                 </div>
 
@@ -73,16 +83,23 @@ export default function IndexChannel() {
                     <div className='w-full h-1/2 bg-[#DBDCFF] rounded-md'>
                         <div className=' pl-16 mt-2'>
 
-                            <h1 className='text-3xl font-medium'>23 Members</h1>
+                            <h1 className='text-3xl font-medium'>{members.length} Members</h1>
 
                         </div>
 
                         <div className="w-full  flex flex-col  items-center overflow-y-auto h-72 overflow-auto">
 
-                            {members.map((member, index) => (
-                                
-                                <Members key={index} firstName={member.firstName} lastName={member.lastName} />
-                            ))}
+                            {members.length > 0 ? (
+                                members.map((member, index) => (
+                                    <Members key={index} firstName={member.firstName} lastName={member.lastName} />
+                                ))
+                            ) : (
+                                <div className='w-full h-full '>
+
+                                    <img src={userGroupIcon} className='w-full h-full' alt="" />
+
+                                </div>
+                            )}
                         </div>
 
 

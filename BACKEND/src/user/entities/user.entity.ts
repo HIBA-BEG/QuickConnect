@@ -37,9 +37,9 @@ export class User extends Document {
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Channel' }] })
   channels: Channel[];
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
-  friends: User[];
-
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] })
+  friends: Types.ObjectId[];
+  
   @Prop({ default: Date.now })
   lastSeen: Date;
 

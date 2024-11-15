@@ -1,4 +1,3 @@
-import { FaUser, FaSignOutAlt } from 'react-icons/fa';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from '../Api/Auth.service';
@@ -89,7 +88,7 @@ const Sidebar: React.FC = () => {
     <SidebarContainer>
       <Logo>Logo</Logo>
       <div className='flex flex-col m-auto'>
-      <Icon>
+      <Icon onClick={() => navigate('/users')}>
         <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
           <rect width="50" height="50" fill="url(#pattern0_13_191)"/>
           <defs>
@@ -121,7 +120,7 @@ const Sidebar: React.FC = () => {
         <StyledParagraph>Groups</StyledParagraph>
           
       </Icon>
-      <Icon>
+      <Icon onClick={() => navigate('/Notifications')}>
         <svg width="31" height="33" viewBox="0 0 31 33" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M30.6507 20.8162L27.4231 17.7358V13.6552C27.4194 10.8352 26.3202 8.11669 24.3381 6.02532C22.3561 3.93396 19.6319 2.6183 16.6923 2.33276V0H14.3077V2.33276C11.3681 2.6183 8.64394 3.93396 6.66186 6.02532C4.67978 8.11669 3.58062 10.8352 3.57692 13.6552V17.7358L0.349346 20.8162C0.12573 21.0295 6.75292e-05 21.3189 0 21.6207V25.0345C0 25.3363 0.125618 25.6257 0.349219 25.8391C0.57282 26.0525 0.876088 26.1724 1.19231 26.1724H9.53846V27.3103C9.53846 28.8193 10.1666 30.2665 11.2846 31.3335C12.4026 32.4006 13.9189 33 15.5 33C17.0811 33 18.5974 32.4006 19.7154 31.3335C20.8335 30.2665 21.4615 28.8193 21.4615 27.3103V26.1724H29.8077C30.1239 26.1724 30.4272 26.0525 30.6508 25.8391C30.8744 25.6257 31 25.3363 31 25.0345V21.6207C30.9999 21.3189 30.8743 21.0295 30.6507 20.8162ZM19.0769 27.3103C19.0769 28.2157 18.7001 29.084 18.0293 29.7243C17.3585 30.3645 16.4487 30.7241 15.5 30.7241C14.5513 30.7241 13.6415 30.3645 12.9707 29.7243C12.2999 29.084 11.9231 28.2157 11.9231 27.3103V26.1724H19.0769V27.3103Z" fill="#B3B3B3"/>
         </svg>

@@ -81,17 +81,5 @@ export class UserController {
   ): Promise<User> {
     return this.userService.deleteById(id);
   }
-
-  @Get(':userId/friends')
-  async getFriends(@Param('userId') userId: string) {
-    try {
-      return await this.userService.getFriends(userId);
-    } catch (error) {
-      throw new HttpException(
-        'Failed to fetch friends',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
   
 }

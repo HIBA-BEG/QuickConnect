@@ -3,17 +3,16 @@ import { CreateFriendRequestDto } from './dto/create-friend-request.dto';
 import { FriendRequest, RequestStatus } from './entities/friend-request.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from '../user/entities/user.entity'; 
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class FriendRequestService {
   constructor(
     @InjectModel(FriendRequest.name)
     private friendRequestModel: Model<FriendRequest>,
-    
-    @InjectModel(User.name) // Inject User model for user operations
+    @InjectModel(User.name)
     private userModel: Model<User>,
-  ) {}
+  ) { }
 
   async create(createFriendRequestDto: CreateFriendRequestDto): Promise<FriendRequest> {
 
@@ -49,28 +48,44 @@ export class FriendRequestService {
   }
 
   async updateStatus(id: string, status: RequestStatus): Promise<FriendRequest> {
-    const request = await this.friendRequestModel.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true },
-    );
-    if (!request) {
-      throw new NotFoundException('Friend request not found');
+    try {
+      const request = await this.friendRequestModel.findById(id).populate('from to');
+      
+      if (!request) {
+        throw new NotFoundException('Friend request not found');
+      }
+  
+      // console.log('friend request:', {
+      //   requestId: request._id,
+      //   fromUserId: request.from._id,
+      //   toUserId: request.to._id,
+      //   currentStatus: request.status
+      // });
+  
+      if (status === RequestStatus.ACCEPTED) {  
+        const fromUserUpdate = await this.userModel.findByIdAndUpdate(
+          request.from._id,
+          { $addToSet: { friends: request.to._id.toString() } },
+          { new: true }
+        );
+        console.log('Updated from user friends:', fromUserUpdate?.friends);
+  
+        const toUserUpdate = await this.userModel.findByIdAndUpdate(
+          request.to._id,
+          { $addToSet: { friends: request.from._id.toString() } },
+          { new: true }
+        );
+        console.log('Updated to user friends:', toUserUpdate?.friends);
+      }
+  
+      request.status = status;
+      const updatedRequest = await request.save();
+      console.log('Friend request status updated to:', updatedRequest.status);
+  
+      return updatedRequest;
+    } catch (error) {
+      console.error('Error in updateStatus:', error);
+      throw error;
     }
-
-    if (status === RequestStatus.ACCEPTED) {
-       const fromUser = await this.userModel.findById(request.from);
-      const toUser = await this.userModel.findById(request.to);
-      console.log(fromUser._id, toUser._id);
-
-      fromUser.friends.push(toUser);
-      toUser.friends.push(fromUser);
-
-      await fromUser.save();
-      await toUser.save();
-
-    }
-
-    return request;
   }
 }

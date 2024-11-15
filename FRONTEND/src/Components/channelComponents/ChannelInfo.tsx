@@ -1,15 +1,74 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import logo from '../../profileicon.jpg'
+import { Channel } from '../../Types/Channel';
+import { editeChannel } from '../../Api/channelAPI/editeChannelApi';
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css"
+interface props {
+    channelInfo: Channel[];
+}
+interface User {
+    _id: string;
+}
+export default function ChannelInfo({ channelInfo }: props) {
 
-export default function ChannelInfo() {
+
     const [options, setOptions] = useState(false);
     const [isEditable, setIsEditable] = useState(false);
     const [editeButton, setEditeButton] = useState(false);
+    // =============================data update =========================
+    const userString = localStorage.getItem('user');
+    let user: User;
+    if (userString) {
+        user = JSON.parse(userString);
+    }
+
+    type ChannelType = "Private" | "Public" | "Conversation";
+    const [data, setData] = useState({
+        name: '',
+        expirationTime: '',
+        type: "Public" as ChannelType,
+        description: '',
+        bannedWords: [] as string[],
+        moderator: '',
+    });
+
+    useEffect(() => {
+        if (channelInfo[0]) {
+            setData({
+                name: channelInfo[0].name || '',
+                expirationTime: channelInfo[0].expirationTime
+                    ? channelInfo[0].expirationTime.toISOString().slice(0, 16)
+                    : '',
+                type: channelInfo[0].type || 'public',
+                description: channelInfo[0].description || '',
+                bannedWords: channelInfo[0].bannedWords || '',
+                moderator: user?._id,
+            });
+        }
+    }, [channelInfo]);
+
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setData((prevData) => ({ ...prevData, [name]: value }));
+    };
+    // ==================================================================
+    const handleUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const updatedData = {
+            ...data,
+            expirationTime: data.expirationTime ? new Date(data.expirationTime) : undefined,
+        };
+        await editeChannel(updatedData, channelInfo[0]?._id);
+        toast.success('Channel updated successfully!', { position: 'bottom-right' });
+    };
+    // =======================================================
     const toggleOptions = () => {
         setOptions(!options);
         setEditeButton(false);
         setIsEditable(false);
-       
+
     }
     const toggleEdite = () => {
         setIsEditable(!isEditable);
@@ -24,7 +83,7 @@ export default function ChannelInfo() {
                     <img src={logo} className='rounded-md' alt="" />
                 </div>
                 <div>
-                    <p className='text-3xl font-medium'>45 shared Links</p>
+                    <p className='text-3xl font-medium'>{channelInfo[0]?.name}</p>
                 </div>
                 <div onClick={toggleOptions} className='  flex justify-center items-center cursor-pointer transition-all ease-out'>
                     {options ?
@@ -54,23 +113,22 @@ export default function ChannelInfo() {
             </div>
 
             <div className="p-8 w-[90%] mx-auto bg-gray-50">
-                <form >
+                <form onSubmit={handleUpdate} >
 
                     <div className="mb-6">
                         <label className="block text-black font-semibold mb-2">Name</label>
-                        <input type='text' placeholder='45 shared links' disabled={!isEditable} className="bg-indigo-100 text-gray-800 p-3 rounded-md h-10 w-[100%]" />
+                        <input type='text' name="name" value={data.name} onChange={handleInputChange} disabled={!isEditable} className="bg-indigo-100 text-gray-800 p-3 rounded-md h-10 w-[100%]" />
                     </div>
 
                     <div className="mb-6">
                         <label className="block text-black font-semibold mb-2">Expiration Time</label>
-                        <input type='text' placeholder='24 Nov 2024' disabled={!isEditable} className="bg-indigo-100 text-gray-800 p-3 rounded-md h-10 w-[100%]" />
-
+                        <input type='datetime-local' name="expirationTime" value={data.expirationTime} disabled={!isEditable} onChange={handleInputChange} className="bg-indigo-100 text-gray-800 p-3 rounded-md h-10 w-[100%]" />
                     </div>
 
                     <div className="mb-6">
                         <label className="block text-black font-semibold mb-2">Type</label>
 
-                        <select disabled={!isEditable} className="bg-indigo-100 text-gray-800 p-3 rounded-md h-11 w-[100%]">
+                        <select disabled={!isEditable} name="type" value={data.type} onChange={handleInputChange} className="bg-indigo-100 text-gray-800 p-3 rounded-md h-11 w-[100%]">
                             <option value="private">private</option>
                             <option value="public">public</option>
                             <option value="Conversation">Conversation</option>
@@ -79,19 +137,19 @@ export default function ChannelInfo() {
 
                     <div className="mb-6">
                         <label className="block text-black font-semibold mb-2">Description</label>
-                        <textarea disabled={!isEditable} className="bg-indigo-100 text-gray-700 p-3 rounded-md max-h-44 w-[100%]">
-                            Lorem LoremLoremLorem Lorem Lorem Lorem Lorem Loremv Lorem vLorem Lorem
+                        <textarea disabled={!isEditable} name="description" value={data.description} onChange={handleInputChange} className="bg-indigo-100 text-gray-700 p-3 rounded-md max-h-44 w-[100%]">
                         </textarea>
                     </div>
 
                     <div className="mb-6">
                         <label className="block text-black font-semibold mb-2">Banne World</label>
-                        <textarea disabled={!isEditable} className="bg-indigo-100 text-gray-700 p-3 rounded-md max-h-44 w-[100%]">
-                            Private &nbsp; Private &nbsp; Private &nbsp; Private &nbsp; Private
+                        <textarea disabled={!isEditable} name="bannedWords" value={data.bannedWords} onChange={handleInputChange}
+                            className="bg-indigo-100 text-gray-700 p-3 rounded-md max-h-44 w-[100%]">
+                            
                         </textarea>
                     </div>
                     {editeButton && <div className='w-full flex justify-end'>
-                        <button className='w-28 h-10 bg-green-600 rounded-md text-white font-medium'>
+                        <button type='submit' className='w-28 h-10 bg-green-600 rounded-md text-white font-medium'>
                             Update
                         </button>
                     </div>
@@ -100,8 +158,7 @@ export default function ChannelInfo() {
 
                 </form>
             </div>
-
-
+            <ToastContainer />
         </div >
     )
 }

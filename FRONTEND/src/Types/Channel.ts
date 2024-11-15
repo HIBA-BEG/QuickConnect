@@ -11,10 +11,10 @@ export interface Channel {
     _id : string;
     name : string;
     description : string;
-    members : MembersType[];
+    members: MembersType[];
+    expirationTime?: Date;
     bannedWords: string[];
     type: 'Private' | 'Public' | 'Conversation';
     moderator: string;
-
 
 }

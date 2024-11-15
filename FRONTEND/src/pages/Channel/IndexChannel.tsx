@@ -8,10 +8,12 @@ import AddForm from '../../Components/channelComponents/AddForm';
 import { ChannelContext } from '../../Contexts/ChannelContext'
 import { Channel, MembersType } from "../../Types/Channel";
 
+
 export default function IndexChannel() {
     const [showAddForm, setShowAddForm] = useState(false)
     const [members, setMembers] = useState<MembersType[]>([]);
-    console.log(members);
+    const [channelInfo, setChannelInfo] = useState<Channel[]>([]);
+    
 
 
     const channelContext = useContext(ChannelContext);
@@ -42,7 +44,7 @@ export default function IndexChannel() {
                     </div>
                     <div className='w-[100%]'>
 
-                        {showAddForm ? <AddForm /> : <ChannelInfo />}
+                        {showAddForm ? <AddForm /> : <ChannelInfo channelInfo={channelInfo} />}
 
                     </div>
 
@@ -59,8 +61,15 @@ export default function IndexChannel() {
                         </div>
 
                         <div className="w-full  flex flex-col  items-center overflow-y-auto h-72 overflow-auto">
-                            {channels.map((item: Channel, index: number) => (
-                                <div key={index} onClick={() => setMembers(item.members)} className='cursor-pointer'>
+                            {channels.map((item:Channel, index: number) => (
+                                <div
+                                    key={index}
+                                    onClick={() => {
+                                        setMembers(item.members);
+                                        setChannelInfo([item])
+                                    }}
+                                    className='cursor-pointer'>
+
                                     <Groups name={item.name} />
                                 </div>
 
@@ -80,7 +89,7 @@ export default function IndexChannel() {
                         <div className="w-full  flex flex-col  items-center overflow-y-auto h-72 overflow-auto">
 
                             {members.map((member, index) => (
-                                
+
                                 <Members key={index} firstName={member.firstName} lastName={member.lastName} />
                             ))}
                         </div>

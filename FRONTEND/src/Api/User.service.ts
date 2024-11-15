@@ -15,6 +15,7 @@ export interface User {
   status: string;
   channels: any[];
   friends: any[];
+  profilePicture: string;
   lastSeen: string;
   createdAt: string;
   updatedAt: string;
@@ -82,14 +83,14 @@ export const userService = {
 
       const responseData = await response.json();
 
-      console.log("responseData: ",responseData);
+      console.log("responseData: ", responseData);
 
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Failed to send friend request');
       }
 
-      return responseData; 
+      return responseData;
     } catch (error) {
       console.error('Error sending friend request:', error);
       throw error;
@@ -103,7 +104,7 @@ export const userService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log("getPendingFriendRequests: ",data);
+      console.log("getPendingFriendRequests: ", data);
       return data;
     } catch (error) {
       console.error('Error fetching pending friend requests:', error);
@@ -128,6 +129,10 @@ export const userService = {
 
       const data = await response.json();
       console.log('Accept friend request response:', data);
+
+      const updatedUser = await userService.getUserById(user._id);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+
       return data;
     } catch (error) {
       console.error('Error accepting friend request:', error);
@@ -150,7 +155,7 @@ export const userService = {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log('Accept friend request response:', data);
       return data;
@@ -158,5 +163,28 @@ export const userService = {
       console.error('Error rejecting friend request:', error);
       throw error;
     }
-  }
+  },
+
+  getUserFriends: async (userId: string): Promise<User[]> => {
+    try {
+      const user = await userService.getUserById(userId);
+      console.log("getUserFriends user: ", user);
+
+      if (!user.friends || user.friends.length === 0) {
+        console.log('No friends found for user');
+        return [];
+      }
+      
+      const friendPromises = user.friends.map(friendId =>
+        userService.getUserById(friendId.toString())
+      );
+
+      const friends = await Promise.all(friendPromises);
+      console.log('Fetched friends:', friends);
+      return friends;
+    } catch (error) {
+      console.error('Error fetching user friends:', error);
+      throw error;
+    }
+  },
 };

@@ -1,6 +1,9 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AllChatFiends from './AllFriends';
+import { User, userService } from '../Api/User.service';
+import defaultProfileIcon from '../profileicon.jpg';
+
 
 const ChatContainer = styled.div`
   flex: 2;
@@ -88,12 +91,62 @@ const FriendsWithChat = styled.div`
   gap: 40px;
 `;
 
+
+const ProfileSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+`;
+
+const ProfileImage = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  object-fit: cover;
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StatusIndicator = styled.span<{ status: string }>`
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+  background-color: ${props =>
+    props.status === 'online' ? '#28a745' :
+    props.status === 'busy' ? '#dc3545' :
+    '#666'
+  };
+`;
+
 interface FriendsChatProps {
   currentUserId: string;
 }
 
 const FriendsChat: React.FC<FriendsChatProps> = ({ currentUserId }) => {
-  const [selectedFriend, setSelectedFriend] = useState('Friend 1');
+  const [selectedFriend, setSelectedFriend] = useState<string | null>(null);
+  const [selectedFriendData, setSelectedFriendData] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchFriendData = async () => {
+      if (selectedFriend) {
+        try {
+          const friendData = await userService.getUserById(selectedFriend);
+          setSelectedFriendData(friendData);
+        } catch (error) {
+          console.error('Error fetching friend data:', error);
+        }
+      }
+    };
+
+    fetchFriendData();
+  }, [selectedFriend]);
+
+
   const [messages, setMessages] = useState([
     { Friend: 'Friend 1', text: 'Hello from Friend 1' },
     { Friend: 'Friend 2', text: 'Hi from Friend 2' },
@@ -109,9 +162,25 @@ const FriendsChat: React.FC<FriendsChatProps> = ({ currentUserId }) => {
       />
       <ChatContainer>
         <ChatHeader>
-          <h2 className=" font-roboto font-bold text-[30px] text-[#132C33]">
-            {selectedFriend}
-          </h2>
+          {selectedFriendData ? (
+            <ProfileSection>
+              <ProfileImage
+                src={selectedFriendData.profilePicture || defaultProfileIcon}
+                alt={`${selectedFriendData.firstName} Profile`}
+              />
+              <UserInfo>
+                <h2 className="font-roboto font-bold text-[30px] text-[#132C33]">
+                  <StatusIndicator status={selectedFriendData.status} />
+                  {`${selectedFriendData.firstName} ${selectedFriendData.lastName}`}
+                </h2>
+                <p>@{selectedFriendData.username}</p>
+              </UserInfo>
+            </ProfileSection>
+          ) : (
+            <h2 className="font-roboto font-bold text-[30px] text-[#132C33]">
+              Select a friend to start chatting
+            </h2>
+          )}
           <div className='flex gap-5'>
             <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M27.715 23.1517L28.475 22.3967L26.71 20.6233L25.9533 21.3783L27.715 23.1517ZM31.0233 22.08L34.2083 23.8117L35.4 21.615L32.2167 19.885L31.0233 22.08ZM34.82 27.2517L32.4533 29.6067L34.215 31.3783L36.5817 29.025L34.82 27.2517ZM31.01 30.3633C28.5933 30.59 22.3433 30.3883 15.5733 23.6583L13.81 25.43C21.1967 32.775 28.2283 33.135 31.2433 32.8533L31.01 30.3633ZM15.5733 23.6583C9.12167 17.2417 8.05167 11.8467 7.91834 9.50501L5.42167 9.64668C5.58834 12.5933 6.91334 18.5733 13.81 25.43L15.5733 23.6583ZM17.865 13.3583L18.3433 12.8817L16.5833 11.11L16.105 11.585L17.865 13.3583ZM18.7233 6.82335L16.6233 4.01668L14.6217 5.51668L16.7217 8.32168L18.7233 6.82335ZM9.555 3.40501L6.93834 6.00501L8.70167 7.77835L11.3167 5.17835L9.555 3.40501ZM16.985 12.4717C16.1017 11.585 16.1017 11.585 16.1017 11.5883H16.0983L16.0933 11.595C16.0141 11.6749 15.9432 11.7625 15.8817 11.8567C15.7917 11.99 15.6933 12.165 15.61 12.3867C15.4071 12.9589 15.3566 13.574 15.4633 14.1717C15.6867 15.6133 16.68 17.5183 19.2233 20.0483L20.9867 18.275C18.605 15.9083 18.0383 14.4683 17.9333 13.7883C17.8833 13.465 17.935 13.305 17.95 13.2683C17.96 13.2461 17.96 13.2428 17.95 13.2583C17.9351 13.2813 17.9184 13.3031 17.9 13.3233L17.8833 13.34L17.8667 13.355L16.985 12.4717ZM19.2233 20.0483C21.7683 22.5783 23.6833 23.565 25.1267 23.785C25.865 23.8983 26.46 23.8083 26.9117 23.64C27.1647 23.5475 27.4011 23.4146 27.6117 23.2467L27.695 23.1717L27.7067 23.1617L27.7117 23.1567L27.7133 23.1533C27.7133 23.1533 27.715 23.1517 26.8333 22.265C25.95 21.3783 25.955 21.3767 25.955 21.3767L25.9583 21.3733L25.9617 21.37L25.9717 21.3617L25.9883 21.345L26.0517 21.295C26.0672 21.285 26.0633 21.2861 26.04 21.2983C25.9983 21.3133 25.835 21.365 25.5067 21.315C24.8167 21.2083 23.3667 20.6417 20.9867 18.275L19.2233 20.0483ZM16.6233 4.01501C14.9233 1.74835 11.5833 1.38835 9.555 3.40501L11.3167 5.17835C12.2033 4.29668 13.7767 4.38835 14.6217 5.51668L16.6233 4.01501ZM7.92 9.50668C7.88667 8.93001 8.15167 8.32668 8.70167 7.78001L6.93667 6.00668C6.04167 6.89668 5.33667 8.15668 5.42167 9.64668L7.92 9.50668ZM32.4533 29.6067C31.9967 30.0633 31.5033 30.32 31.0117 30.365L31.2433 32.8533C32.4683 32.7383 33.47 32.1217 34.2167 31.38L32.4533 29.6067ZM18.3433 12.8817C19.985 11.25 20.1067 8.67168 18.725 6.82501L16.7233 8.32335C17.395 9.22168 17.295 10.4 16.5817 11.1117L18.3433 12.8817ZM34.21 23.8133C35.5717 24.5533 35.7833 26.2967 34.8217 27.2533L36.585 29.025C38.8183 26.8033 38.13 23.0983 35.4017 21.6167L34.21 23.8133ZM28.475 22.3983C29.115 21.7617 30.145 21.605 31.025 22.0817L32.2183 19.8867C30.4117 18.9033 28.1717 19.175 26.7117 20.625L28.475 22.3983Z" fill="#7678ED" />

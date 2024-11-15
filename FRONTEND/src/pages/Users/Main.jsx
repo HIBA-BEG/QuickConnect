@@ -27,6 +27,7 @@ const ToggleButton = styled.button`
 `;
 
 const Main = () => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   const [isGroupChat, setIsGroupChat] = useState(true);
 
   const toggleChatType = () => {
@@ -41,7 +42,7 @@ const Main = () => {
         {isGroupChat ? 'Switch to Friends Chat' : 'Switch to Group Chat'}
       </ToggleButton>
       
-      {isGroupChat ? <GroupeMessage /> : <FriendsChat />}
+      {isGroupChat ? <GroupeMessage /> : <FriendsChat currentUserId={user._id} />}
       
       <InfoMessage />
     </MainContainer>

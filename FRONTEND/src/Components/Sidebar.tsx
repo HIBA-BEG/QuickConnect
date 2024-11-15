@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { logoutUser } from '../Api/Auth.service';
 
 const SidebarContainer = styled.div`
@@ -39,7 +39,7 @@ const Icon = styled.div`
   }
 `;
 
-const ProfileIcon= styled(Icon)`
+const ProfileIcon = styled(Icon)`
    margin-top: auto; 
   padding: 10px 0; 
 `
@@ -113,7 +113,7 @@ const Sidebar: React.FC = () => {
 
        <StyledParagraph>Friends</StyledParagraph> 
       </Icon>
-      <Icon>
+      <Icon onClick={() => navigate('/channel')}>
         <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M8.33333 28.1771L13.5938 22.9167L8.33333 17.6563L3.07292 22.9167L8.33333 28.1771ZM36.4583 27.0833L41.6667 18.75L46.875 27.0833H36.4583ZM25 25C23.2639 25 21.7882 24.3924 20.5729 23.1771C19.3576 21.9618 18.75 20.4861 18.75 18.75C18.75 16.9792 19.3576 15.4951 20.5729 14.2979C21.7882 13.1007 23.2639 12.5014 25 12.5C26.7708 12.5 28.2556 13.0993 29.4542 14.2979C30.6528 15.4965 31.2514 16.9806 31.25 18.75C31.25 20.4861 30.6514 21.9618 29.4542 23.1771C28.2569 24.3924 26.7722 25 25 25ZM25 16.6667C24.4097 16.6667 23.9153 16.8667 23.5167 17.2667C23.1181 17.6667 22.9181 18.1611 22.9167 18.75C22.9153 19.3389 23.1153 19.834 23.5167 20.2354C23.9181 20.6368 24.4125 20.8361 25 20.8333C25.5875 20.8306 26.0826 20.6306 26.4854 20.2333C26.8882 19.8361 27.0875 19.3417 27.0833 18.75C27.0792 18.1583 26.8792 17.6639 26.4833 17.2667C26.0875 16.8694 25.5931 16.6694 25 16.6667ZM0 35.4167V34.2187C0 32.691 0.772917 31.4667 2.31875 30.5458C3.86458 29.625 5.86944 29.1653 8.33333 29.1667C8.78472 29.1667 9.21875 29.1757 9.63542 29.1937C10.0521 29.2118 10.4514 29.2549 10.8333 29.3229C10.3472 30.0174 9.98264 30.7639 9.73958 31.5625C9.49653 32.3611 9.375 33.2118 9.375 34.1146V37.5H2.08333C1.49306 37.5 0.998611 37.3 0.6 36.9C0.201389 36.5 0.00138889 36.0056 0 35.4167ZM12.5 35.4167V34.1146C12.5 31.8576 13.6549 30.0347 15.9646 28.6458C18.2743 27.2569 21.2861 26.5625 25 26.5625C28.75 26.5625 31.7708 27.2569 34.0625 28.6458C36.3542 30.0347 37.5 31.8576 37.5 34.1146V35.4167C37.5 36.0069 37.3 36.5021 36.9 36.9021C36.5 37.3021 36.0056 37.5014 35.4167 37.5H14.5833C13.9931 37.5 13.4986 37.3 13.1 36.9C12.7014 36.5 12.5014 36.0056 12.5 35.4167ZM41.6667 29.1667C44.1667 29.1667 46.1806 29.6271 47.7083 30.5479C49.2361 31.4688 50 32.6924 50 34.2187V35.4167C50 36.0069 49.8 36.5021 49.4 36.9021C49 37.3021 48.5056 37.5014 47.9167 37.5H40.625V34.1146C40.625 33.2118 40.5125 32.3611 40.2875 31.5625C40.0625 30.7639 39.7236 30.0174 39.2708 29.3229C39.6528 29.2535 40.0437 29.2104 40.4437 29.1937C40.8438 29.1771 41.2514 29.1681 41.6667 29.1667ZM25 30.7292C23.0208 30.7292 21.25 30.9896 19.6875 31.5104C18.125 32.0312 17.2049 32.6389 16.9271 33.3333H33.125C32.8125 32.6389 31.8833 32.0312 30.3375 31.5104C28.7917 30.9896 27.0125 30.7292 25 30.7292Z" fill="#B3B3B3"/>
         </svg>
@@ -130,30 +130,30 @@ const Sidebar: React.FC = () => {
      
       </div>
       <ProfileIcon>
-          <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-            <rect width="50" height="50" fill="url(#pattern0_19_3)"/>
-            <defs>
+        <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+          <rect width="50" height="50" fill="url(#pattern0_19_3)" />
+          <defs>
             <pattern id="pattern0_19_3" patternContentUnits="objectBoundingBox" width="1" height="1">
-            <use xlinkHref="#image0_19_3" transform="scale(0.0111111)"/>
+              <use xlinkHref="#image0_19_3" transform="scale(0.0111111)" />
             </pattern>
-            <image id="image0_19_3" width="90" height="90" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAAD2klEQVR4nO2cz2tcVRTHr40txoVCNVUQf5S0W+lCxNIKEjTYhUttrV0IbQnYRf+EybJUxjQkmfv93pchC38s3lboxpVEbak/scaENoXuCiZtUwrRNuotl3kto42aifPevbn3fOALw8zAzPly5sx95553lRIEQRAEQRAEQRA6J8uyHQCOkfyE5HcArpK8XWjRPVe89h7J/nV8RLrUarUHjTHvkPyKpO1EAL4keTDP8x7fcQQNgNdJXujU4FU0R3LQdzzBQfJhkpNdMPjvGW7q9Xqv7/iCoNFobCP5bbdNbtPXzWazT6VMo2XyXIkm3yslyZrNVrkoM5Pvy+ypqamHVGqwhJq8hpoNlRIkB6s2uU37VCrrZHZnCbdezSaxzgZwyKPJd3VAxQ6AMwEY/YWKvXdB/ya7P8U/jTHbVayg1SCygWhIxQpbnTYbSFZ/pGIFwPcBGf2NihW2esihGP2LihUAt3wb3KbfVKzQv7l/kYoVBmCuGE0xumtAanQ1UFYd1QBZR1cDyY99/wG26UMVK2wNuthAFHWvo991znyb7L6D1vo5FTNcxwRSCZpWsUPyoG+jjTFvqdjJ87ynolmOf9JMEnuGDq31ax6zeUClBADjweiGSo16vd7rpocqNPlskpNKDjcPV1G9niX5uEqZZrPZB+BcmZmc7IDjamXEzcWVUZOTLRf/BslXi5/5/zV4JrnVRafked6jtX7bTRN1crlevHcawP5arbbJdxwbCmPMdtf8cTMYxSz1ots8KDYQFtzIQPHaUPS9C0EQBEEQBEEQhGQg+SiA3caYowBOATjtOnBFO/UKgF+d3GPXF3E3HxXvGSF5xBjz0ujo6CO+4wiO8fHxJ92GLYAmyUtd7NzNu7tzXd8ky7InVIoYY3aRPAngpwqa/ncbTj+SPJFl2fMqZkg+Q/J4cTxP6eb+VxuV5LDWeqeKBZJ7AXwawoTSapkO4DMAb1hrH1AbjTzPt2itD5M879tMrl0/GGPeJblZbQRcdgC4GIBxdp1yBwK8GWyGa61fdLsiARhlu6TPAbygAjsWYhjA7wGYY7usP0iOei8nbvuoOGvOxiwA59yBAb5MfoXkkm8TWJ3Z140xL1dqsvvA4jLYJqZlrfWeSkweGxt7zO1ABxC09aSFLMu2lm40gA8CCNb6FID3Szfa88FTNgQB+LkKo5d9B0r/ulm60QAuBxCo9az5KoweCyBQ61kjpRuttX6K5LUAgrWetDQxMfF06Ua33exzI4CgrYeLloHKJz0BTBSrkBXfJrA8rRQxjk9OTj5bqcmCIAiCIAiCIAiCIAgqTO4AsQnvcdVu+lwAAAAASUVORK5CYII="/>
-            </defs>
+            <image id="image0_19_3" width="90" height="90" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAAD2klEQVR4nO2cz2tcVRTHr40txoVCNVUQf5S0W+lCxNIKEjTYhUttrV0IbQnYRf+EybJUxjQkmfv93pchC38s3lboxpVEbak/scaENoXuCiZtUwrRNuotl3kto42aifPevbn3fOALw8zAzPly5sx95553lRIEQRAEQRAEQRA6J8uyHQCOkfyE5HcArpK8XWjRPVe89h7J/nV8RLrUarUHjTHvkPyKpO1EAL4keTDP8x7fcQQNgNdJXujU4FU0R3LQdzzBQfJhkpNdMPjvGW7q9Xqv7/iCoNFobCP5bbdNbtPXzWazT6VMo2XyXIkm3yslyZrNVrkoM5Pvy+ypqamHVGqwhJq8hpoNlRIkB6s2uU37VCrrZHZnCbdezSaxzgZwyKPJd3VAxQ6AMwEY/YWKvXdB/ya7P8U/jTHbVayg1SCygWhIxQpbnTYbSFZ/pGIFwPcBGf2NihW2esihGP2LihUAt3wb3KbfVKzQv7l/kYoVBmCuGE0xumtAanQ1UFYd1QBZR1cDyY99/wG26UMVK2wNuthAFHWvo991znyb7L6D1vo5FTNcxwRSCZpWsUPyoG+jjTFvqdjJ87ynolmOf9JMEnuGDq31ax6zeUClBADjweiGSo16vd7rpocqNPlskpNKDjcPV1G9niX5uEqZZrPZB+BcmZmc7IDjamXEzcWVUZOTLRf/BslXi5/5/zV4JrnVRafked6jtX7bTRN1crlevHcawP5arbbJdxwbCmPMdtf8cTMYxSz1ots8KDYQFtzIQPHaUPS9C0EQBEEQBEEQhGQg+SiA3caYowBOATjtOnBFO/UKgF+d3GPXF3E3HxXvGSF5xBjz0ujo6CO+4wiO8fHxJ92GLYAmyUtd7NzNu7tzXd8ky7InVIoYY3aRPAngpwqa/ncbTj+SPJFl2fMqZkg+Q/J4cTxP6eb+VxuV5LDWeqeKBZJ7AXwawoTSapkO4DMAb1hrH1AbjTzPt2itD5M879tMrl0/GGPeJblZbQRcdgC4GIBxdp1yBwK8GWyGa61fdLsiARhlu6TPAbygAjsWYhjA7wGYY7usP0iOei8nbvuoOGvOxiwA59yBAb5MfoXkkm8TWJ3Z140xL1dqsvvA4jLYJqZlrfWeSkweGxt7zO1ABxC09aSFLMu2lm40gA8CCNb6FID3Szfa88FTNgQB+LkKo5d9B0r/ulm60QAuBxCo9az5KoweCyBQ61kjpRuttX6K5LUAgrWetDQxMfF06Ua33exzI4CgrYeLloHKJz0BTBSrkBXfJrA8rRQxjk9OTj5bqcmCIAiCIAiCIAiCIAgqTO4AsQnvcdVu+lwAAAAASUVORK5CYII=" />
+          </defs>
         </svg>
-<StyledParagraph>Profile</StyledParagraph>
-         
-        </ProfileIcon>
+        <StyledParagraph>Profile</StyledParagraph>
+
+      </ProfileIcon>
       <LogoutButton onClick={handleLogout}>
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-            <rect width="40" height="40" fill="url(#pattern0_19_4)"/>
-            <defs>
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+          <rect width="40" height="40" fill="url(#pattern0_19_4)" />
+          <defs>
             <pattern id="pattern0_19_4" patternContentUnits="objectBoundingBox" width="1" height="1">
-            <use xlinkHref="#image0_19_4" transform="scale(0.0111111)"/>
+              <use xlinkHref="#image0_19_4" transform="scale(0.0111111)" />
             </pattern>
-            <image id="image0_19_4" width="90" height="90" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAACkElEQVR4nO2dzWoUQRRGSxdGIS+gvmGMLuNydgrCEBoH5h4YmP0sXYhPoHER40sIgisdRVy1FDYoQhJ0uure6foO3GU3VYfL1z9V05OSEEIIIYQQQkyBrusOgEfAmZl9Bfp9KPs11jPgeLPZ3EqRWS6X94H33tLYXfpFnksK3Ml7L5nf9S5kZw9x4S2nH7mzH6RoAG8nKPpNigaw9RbD+LVN0QggpS9RKRreQpBof1moo/1FouggRKVoeAtBov1loY72F4migxCVouEtBIn2l4U62l8kig5CVIqGtxAk2l8W6uhpRMd8Pr8DMCzwfgKe5aU9RQfjis6S/z7OzF4Wkd1qR/d9f+Oy1aUisluODjP7ctnxo8tuWTRwetU5RpXdsuiu6w6yzCqyWxadyZttgBfXyH61Xq9vp11oXXQ12d5CCCC6imxvIQQRXVy2txACiS4q21sIwUQXk11z8mb2AzhZrVb3dhERZV7/dOtXWfTj0oId5vU02oB64G5xw5XnZWYfQw0I6GtERu15mdmHUANiotFhZk9CDYjhYphl62I4oUot396xB6L1wEJ50XoEp3xH66US5aNDr0kpn9F68U/5i6GWsqhz12Fmz686hxZn2V30bDa7CXyrIjkz5r0reybazL5Xkdyy6IyZratIzrQserFYHGbZQ2fn7WGn2uTI+KL/3IeXStNyR1fFWwgS7S8LdbS/SBQdhKgUDW8hSLS/LNTR/iJRdBCiUjS8hSDR/rJQR/uLRNFBiErR8BZCQ6Kn+BHYzykaw2fb+4nV6xQNM3sYQEw/ch2laAx7Gy4CyOlHqvOQn57P5D8gmIjs85q/Kvgvhq1Rxznf9uwCuR3GfBS2k4UQQgghhBAiOfETLcyeie4jCkQAAAAASUVORK5CYII="/>
-            </defs>
-          </svg>
-          <StyledParagraph> Log-Out</StyledParagraph>
-        
+            <image id="image0_19_4" width="90" height="90" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAACkElEQVR4nO2dzWoUQRRGSxdGIS+gvmGMLuNydgrCEBoH5h4YmP0sXYhPoHER40sIgisdRVy1FDYoQhJ0uure6foO3GU3VYfL1z9V05OSEEIIIYQQQkyBrusOgEfAmZl9Bfp9KPs11jPgeLPZ3EqRWS6X94H33tLYXfpFnksK3Ml7L5nf9S5kZw9x4S2nH7mzH6RoAG8nKPpNigaw9RbD+LVN0QggpS9RKRreQpBof1moo/1FouggRKVoeAtBov1loY72F4migxCVouEtBIn2l4U62l8kig5CVIqGtxAk2l8W6uhpRMd8Pr8DMCzwfgKe5aU9RQfjis6S/z7OzF4Wkd1qR/d9f+Oy1aUisluODjP7ctnxo8tuWTRwetU5RpXdsuiu6w6yzCqyWxadyZttgBfXyH61Xq9vp11oXXQ12d5CCCC6imxvIQQRXVy2txACiS4q21sIwUQXk11z8mb2AzhZrVb3dhERZV7/dOtXWfTj0oId5vU02oB64G5xw5XnZWYfQw0I6GtERu15mdmHUANiotFhZk9CDYjhYphl62I4oUot396xB6L1wEJ50XoEp3xH66US5aNDr0kpn9F68U/5i6GWsqhz12Fmz686hxZn2V30bDa7CXyrIjkz5r0reybazL5Xkdyy6IyZratIzrQserFYHGbZQ2fn7WGn2uTI+KL/3IeXStNyR1fFWwgS7S8LdbS/SBQdhKgUDW8hSLS/LNTR/iJRdBCiUjS8hSDR/rJQR/uLRNFBiErR8BZCQ6Kn+BHYzykaw2fb+4nV6xQNM3sYQEw/ch2laAx7Gy4CyOlHqvOQn57P5D8gmIjs85q/Kvgvhq1Rxznf9uwCuR3GfBS2k4UQQgghhBAiOfETLcyeie4jCkQAAAAASUVORK5CYII=" />
+          </defs>
+        </svg>
+        <StyledParagraph> Log-Out</StyledParagraph>
+
       </LogoutButton>
     </SidebarContainer>
   );

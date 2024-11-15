@@ -8,13 +8,13 @@ export type MembersType ={
     status : string;
    }
 export interface Channel {
-    _id : string;
+    _id: string;
     name : string;
     description : string;
-    members : MembersType[];
+    members: MembersType[];
+    expirationTime?: string;
     bannedWords: string[];
     type: 'Private' | 'Public' | 'Conversation';
-    moderator: string;
-
+    moderator?: string;
 
 }

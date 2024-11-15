@@ -31,11 +31,18 @@ function App() {
             </ProtectedRoute>
           }
         />
-       
-          <Route path="/channel" element={ <ChannelProvider><IndexChannel />  </ChannelProvider>} />
-      
+
+        <Route
+          path="/channel" element={
+            <ProtectedRoute>
+              <ChannelProvider>
+                <IndexChannel />
+              </ChannelProvider>
+            </ProtectedRoute>
+          } />
+
         {/* <Route path="/users" element={<Main />} /> */}
-        <Route path="/video" element={<VideoCall />} /> 
+        <Route path="/video" element={<VideoCall />} />
         <Route path="*" element={<Nopage />} />
       </Routes>
     </Router>

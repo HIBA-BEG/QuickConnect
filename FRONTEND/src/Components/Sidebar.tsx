@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { logoutUser } from '../Api/Auth.service';
 
 const SidebarContainer = styled.div`
@@ -39,7 +39,7 @@ const Icon = styled.div`
   }
 `;
 
-const ProfileIcon= styled(Icon)`
+const ProfileIcon = styled(Icon)`
    margin-top: auto; 
   padding: 10px 0; 
 `
@@ -130,30 +130,30 @@ const Sidebar: React.FC = () => {
      
       </div>
       <ProfileIcon>
-          <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-            <rect width="50" height="50" fill="url(#pattern0_19_3)"/>
-            <defs>
+        <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+          <rect width="50" height="50" fill="url(#pattern0_19_3)" />
+          <defs>
             <pattern id="pattern0_19_3" patternContentUnits="objectBoundingBox" width="1" height="1">
-            <use xlinkHref="#image0_19_3" transform="scale(0.0111111)"/>
+              <use xlinkHref="#image0_19_3" transform="scale(0.0111111)" />
             </pattern>
-            <image id="image0_19_3" width="90" height="90" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAAD2klEQVR4nO2cz2tcVRTHr40txoVCNVUQf5S0W+lCxNIKEjTYhUttrV0IbQnYRf+EybJUxjQkmfv93pchC38s3lboxpVEbak/scaENoXuCiZtUwrRNuotl3kto42aifPevbn3fOALw8zAzPly5sx95553lRIEQRAEQRAEQRA6J8uyHQCOkfyE5HcArpK8XWjRPVe89h7J/nV8RLrUarUHjTHvkPyKpO1EAL4keTDP8x7fcQQNgNdJXujU4FU0R3LQdzzBQfJhkpNdMPjvGW7q9Xqv7/iCoNFobCP5bbdNbtPXzWazT6VMo2XyXIkm3yslyZrNVrkoM5Pvy+ypqamHVGqwhJq8hpoNlRIkB6s2uU37VCrrZHZnCbdezSaxzgZwyKPJd3VAxQ6AMwEY/YWKvXdB/ya7P8U/jTHbVayg1SCygWhIxQpbnTYbSFZ/pGIFwPcBGf2NihW2esihGP2LihUAt3wb3KbfVKzQv7l/kYoVBmCuGE0xumtAanQ1UFYd1QBZR1cDyY99/wG26UMVK2wNuthAFHWvo991znyb7L6D1vo5FTNcxwRSCZpWsUPyoG+jjTFvqdjJ87ynolmOf9JMEnuGDq31ax6zeUClBADjweiGSo16vd7rpocqNPlskpNKDjcPV1G9niX5uEqZZrPZB+BcmZmc7IDjamXEzcWVUZOTLRf/BslXi5/5/zV4JrnVRafked6jtX7bTRN1crlevHcawP5arbbJdxwbCmPMdtf8cTMYxSz1ots8KDYQFtzIQPHaUPS9C0EQBEEQBEEQhGQg+SiA3caYowBOATjtOnBFO/UKgF+d3GPXF3E3HxXvGSF5xBjz0ujo6CO+4wiO8fHxJ92GLYAmyUtd7NzNu7tzXd8ky7InVIoYY3aRPAngpwqa/ncbTj+SPJFl2fMqZkg+Q/J4cTxP6eb+VxuV5LDWeqeKBZJ7AXwawoTSapkO4DMAb1hrH1AbjTzPt2itD5M879tMrl0/GGPeJblZbQRcdgC4GIBxdp1yBwK8GWyGa61fdLsiARhlu6TPAbygAjsWYhjA7wGYY7usP0iOei8nbvuoOGvOxiwA59yBAb5MfoXkkm8TWJ3Z140xL1dqsvvA4jLYJqZlrfWeSkweGxt7zO1ABxC09aSFLMu2lm40gA8CCNb6FID3Szfa88FTNgQB+LkKo5d9B0r/ulm60QAuBxCo9az5KoweCyBQ61kjpRuttX6K5LUAgrWetDQxMfF06Ua33exzI4CgrYeLloHKJz0BTBSrkBXfJrA8rRQxjk9OTj5bqcmCIAiCIAiCIAiCIAgqTO4AsQnvcdVu+lwAAAAASUVORK5CYII="/>
-            </defs>
+            <image id="image0_19_3" width="90" height="90" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAAD2klEQVR4nO2cz2tcVRTHr40txoVCNVUQf5S0W+lCxNIKEjTYhUttrV0IbQnYRf+EybJUxjQkmfv93pchC38s3lboxpVEbak/scaENoXuCiZtUwrRNuotl3kto42aifPevbn3fOALw8zAzPly5sx95553lRIEQRAEQRAEQRA6J8uyHQCOkfyE5HcArpK8XWjRPVe89h7J/nV8RLrUarUHjTHvkPyKpO1EAL4keTDP8x7fcQQNgNdJXujU4FU0R3LQdzzBQfJhkpNdMPjvGW7q9Xqv7/iCoNFobCP5bbdNbtPXzWazT6VMo2XyXIkm3yslyZrNVrkoM5Pvy+ypqamHVGqwhJq8hpoNlRIkB6s2uU37VCrrZHZnCbdezSaxzgZwyKPJd3VAxQ6AMwEY/YWKvXdB/ya7P8U/jTHbVayg1SCygWhIxQpbnTYbSFZ/pGIFwPcBGf2NihW2esihGP2LihUAt3wb3KbfVKzQv7l/kYoVBmCuGE0xumtAanQ1UFYd1QBZR1cDyY99/wG26UMVK2wNuthAFHWvo991znyb7L6D1vo5FTNcxwRSCZpWsUPyoG+jjTFvqdjJ87ynolmOf9JMEnuGDq31ax6zeUClBADjweiGSo16vd7rpocqNPlskpNKDjcPV1G9niX5uEqZZrPZB+BcmZmc7IDjamXEzcWVUZOTLRf/BslXi5/5/zV4JrnVRafked6jtX7bTRN1crlevHcawP5arbbJdxwbCmPMdtf8cTMYxSz1ots8KDYQFtzIQPHaUPS9C0EQBEEQBEEQhGQg+SiA3caYowBOATjtOnBFO/UKgF+d3GPXF3E3HxXvGSF5xBjz0ujo6CO+4wiO8fHxJ92GLYAmyUtd7NzNu7tzXd8ky7InVIoYY3aRPAngpwqa/ncbTj+SPJFl2fMqZkg+Q/J4cTxP6eb+VxuV5LDWeqeKBZJ7AXwawoTSapkO4DMAb1hrH1AbjTzPt2itD5M879tMrl0/GGPeJblZbQRcdgC4GIBxdp1yBwK8GWyGa61fdLsiARhlu6TPAbygAjsWYhjA7wGYY7usP0iOei8nbvuoOGvOxiwA59yBAb5MfoXkkm8TWJ3Z140xL1dqsvvA4jLYJqZlrfWeSkweGxt7zO1ABxC09aSFLMu2lm40gA8CCNb6FID3Szfa88FTNgQB+LkKo5d9B0r/ulm60QAuBxCo9az5KoweCyBQ61kjpRuttX6K5LUAgrWetDQxMfF06Ua33exzI4CgrYeLloHKJz0BTBSrkBXfJrA8rRQxjk9OTj5bqcmCIAiCIAiCIAiCIAgqTO4AsQnvcdVu+lwAAAAASUVORK5CYII=" />
+          </defs>
         </svg>
-<StyledParagraph>Profile</StyledParagraph>
-         
-        </ProfileIcon>
+        <StyledParagraph>Profile</StyledParagraph>
+
+      </ProfileIcon>
       <LogoutButton onClick={handleLogout}>
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-            <rect width="40" height="40" fill="url(#pattern0_19_4)"/>
-            <defs>
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+          <rect width="40" height="40" fill="url(#pattern0_19_4)" />
+          <defs>
             <pattern id="pattern0_19_4" patternContentUnits="objectBoundingBox" width="1" height="1">
-            <use xlinkHref="#image0_19_4" transform="scale(0.0111111)"/>
+              <use xlinkHref="#image0_19_4" transform="scale(0.0111111)" />
             </pattern>
-            <image id="image0_19_4" width="90" height="90" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAACkElEQVR4nO2dzWoUQRRGSxdGIS+gvmGMLuNydgrCEBoH5h4YmP0sXYhPoHER40sIgisdRVy1FDYoQhJ0uure6foO3GU3VYfL1z9V05OSEEIIIYQQQkyBrusOgEfAmZl9Bfp9KPs11jPgeLPZ3EqRWS6X94H33tLYXfpFnksK3Ml7L5nf9S5kZw9x4S2nH7mzH6RoAG8nKPpNigaw9RbD+LVN0QggpS9RKRreQpBof1moo/1FouggRKVoeAtBov1loY72F4migxCVouEtBIn2l4U62l8kig5CVIqGtxAk2l8W6uhpRMd8Pr8DMCzwfgKe5aU9RQfjis6S/z7OzF4Wkd1qR/d9f+Oy1aUisluODjP7ctnxo8tuWTRwetU5RpXdsuiu6w6yzCqyWxadyZttgBfXyH61Xq9vp11oXXQ12d5CCCC6imxvIQQRXVy2txACiS4q21sIwUQXk11z8mb2AzhZrVb3dhERZV7/dOtXWfTj0oId5vU02oB64G5xw5XnZWYfQw0I6GtERu15mdmHUANiotFhZk9CDYjhYphl62I4oUot396xB6L1wEJ50XoEp3xH66US5aNDr0kpn9F68U/5i6GWsqhz12Fmz686hxZn2V30bDa7CXyrIjkz5r0reybazL5Xkdyy6IyZratIzrQserFYHGbZQ2fn7WGn2uTI+KL/3IeXStNyR1fFWwgS7S8LdbS/SBQdhKgUDW8hSLS/LNTR/iJRdBCiUjS8hSDR/rJQR/uLRNFBiErR8BZCQ6Kn+BHYzykaw2fb+4nV6xQNM3sYQEw/ch2laAx7Gy4CyOlHqvOQn57P5D8gmIjs85q/Kvgvhq1Rxznf9uwCuR3GfBS2k4UQQgghhBAiOfETLcyeie4jCkQAAAAASUVORK5CYII="/>
-            </defs>
-          </svg>
-          <StyledParagraph> Log-Out</StyledParagraph>
-        
+            <image id="image0_19_4" width="90" height="90" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAACkElEQVR4nO2dzWoUQRRGSxdGIS+gvmGMLuNydgrCEBoH5h4YmP0sXYhPoHER40sIgisdRVy1FDYoQhJ0uure6foO3GU3VYfL1z9V05OSEEIIIYQQQkyBrusOgEfAmZl9Bfp9KPs11jPgeLPZ3EqRWS6X94H33tLYXfpFnksK3Ml7L5nf9S5kZw9x4S2nH7mzH6RoAG8nKPpNigaw9RbD+LVN0QggpS9RKRreQpBof1moo/1FouggRKVoeAtBov1loY72F4migxCVouEtBIn2l4U62l8kig5CVIqGtxAk2l8W6uhpRMd8Pr8DMCzwfgKe5aU9RQfjis6S/z7OzF4Wkd1qR/d9f+Oy1aUisluODjP7ctnxo8tuWTRwetU5RpXdsuiu6w6yzCqyWxadyZttgBfXyH61Xq9vp11oXXQ12d5CCCC6imxvIQQRXVy2txACiS4q21sIwUQXk11z8mb2AzhZrVb3dhERZV7/dOtXWfTj0oId5vU02oB64G5xw5XnZWYfQw0I6GtERu15mdmHUANiotFhZk9CDYjhYphl62I4oUot396xB6L1wEJ50XoEp3xH66US5aNDr0kpn9F68U/5i6GWsqhz12Fmz686hxZn2V30bDa7CXyrIjkz5r0reybazL5Xkdyy6IyZratIzrQserFYHGbZQ2fn7WGn2uTI+KL/3IeXStNyR1fFWwgS7S8LdbS/SBQdhKgUDW8hSLS/LNTR/iJRdBCiUjS8hSDR/rJQR/uLRNFBiErR8BZCQ6Kn+BHYzykaw2fb+4nV6xQNM3sYQEw/ch2laAx7Gy4CyOlHqvOQn57P5D8gmIjs85q/Kvgvhq1Rxznf9uwCuR3GfBS2k4UQQgghhBAiOfETLcyeie4jCkQAAAAASUVORK5CYII=" />
+          </defs>
+        </svg>
+        <StyledParagraph> Log-Out</StyledParagraph>
+
       </LogoutButton>
     </SidebarContainer>
   );

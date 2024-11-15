@@ -3,13 +3,17 @@ import { CreateFriendRequestDto } from './dto/create-friend-request.dto';
 import { FriendRequest, RequestStatus } from './entities/friend-request.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { User } from '../user/entities/user.entity'; 
 
 @Injectable()
 export class FriendRequestService {
   constructor(
     @InjectModel(FriendRequest.name)
     private friendRequestModel: Model<FriendRequest>,
-  ) { }
+    
+    @InjectModel(User.name) // Inject User model for user operations
+    private userModel: Model<User>,
+  ) {}
 
   async create(createFriendRequestDto: CreateFriendRequestDto): Promise<FriendRequest> {
 
@@ -53,6 +57,20 @@ export class FriendRequestService {
     if (!request) {
       throw new NotFoundException('Friend request not found');
     }
+
+    if (status === RequestStatus.ACCEPTED) {
+       const fromUser = await this.userModel.findById(request.from);
+      const toUser = await this.userModel.findById(request.to);
+      console.log(fromUser._id, toUser._id);
+
+      fromUser.friends.push(toUser);
+      toUser.friends.push(fromUser);
+
+      await fromUser.save();
+      await toUser.save();
+
+    }
+
     return request;
   }
 }

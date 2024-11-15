@@ -43,6 +43,8 @@ export const userService = {
     }
   },
 
+
+
   sendFriendRequest: async (toUserId: string): Promise<void> => {
     const token = localStorage.getItem('token');
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
@@ -79,5 +81,18 @@ export const userService = {
       console.error('Error sending friend request:', error);
       throw error;
     }
-  }
+  },
+  
+  getMyFriends: async (id: string): Promise<User> => {
+    try {
+      const response = await fetch(`${apiUrl}/user/${id}/friends`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('Error fetching my friends:', error);
+      throw error;
+    }
+  }  
 };

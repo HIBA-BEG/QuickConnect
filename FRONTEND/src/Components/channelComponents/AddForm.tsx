@@ -1,12 +1,16 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { addChannel } from '../../Api/channelAPI/addChannelApi';
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css"
 import { log } from 'console';
+import { ChannelContext } from '../../Contexts/ChannelContext';
 interface User {
     _id: string;
 }
 export default function AddForm() {
+    const channelContext = useContext(ChannelContext);
+    const handleAddChannel = channelContext?.addChannel;
+
     const userString = localStorage.getItem('user');
     let user: User;
     if (userString) {
@@ -32,7 +36,7 @@ export default function AddForm() {
             [name]: name === "bannedWords" ? value.split(",").map((word) => word.trim()) : value,
         }));
     };
-    
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,12 +44,15 @@ export default function AddForm() {
         const submitData = {
             ...data,
             moderator: user._id,
-            
+
         };
 
-        console.log("Data to submit:", submitData);
-        await addChannel(submitData);
-        toast.success('Channel added successfully!', { position: 'bottom-right' });
+        const addData = await addChannel(submitData);
+        if (handleAddChannel) {
+            handleAddChannel(addData)
+            toast.success('Channel added successfully!', { position: 'bottom-right' });
+        }
+
     };
 
     return (
@@ -78,7 +85,7 @@ export default function AddForm() {
                         <label className="block text-black font-semibold mb-2">Type</label>
 
                         <select onChange={handleInputChange} name='type' className="bg-indigo-100 text-gray-800 p-3 rounded-md h-11 w-[100%]">
-                        
+
                             <option value="Private">private</option>
                             <option value="Public">public</option>
                             <option value="Conversation">Conversation</option>
@@ -93,7 +100,7 @@ export default function AddForm() {
                     </div>
 
                     <div className="mb-6">
-                        <label className="block text-black font-semibold mb-2">Banne World</label> 
+                        <label className="block text-black font-semibold mb-2">Banne World</label>
                         <textarea onChange={handleInputChange} name='bannedWords' className="bg-indigo-100 text-gray-700 p-3 rounded-md max-h-44 w-[100%]">
 
                         </textarea>

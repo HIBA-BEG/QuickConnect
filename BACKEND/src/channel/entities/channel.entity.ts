@@ -31,8 +31,8 @@ export class Channel extends Document {
     @Prop({ type: String, enum: ChannelType, default: ChannelType.PUBLIC })
     type: ChannelType;
 
-    @Prop()
-    expirationTime?: Date;
+    @Prop({type: Date, required: false})
+    expirationTime: Date;
 
     @Prop()
     scheduledTime?: Date;

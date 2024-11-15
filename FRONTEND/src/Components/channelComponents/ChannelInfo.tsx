@@ -7,9 +7,6 @@ import "react-toastify/dist/ReactToastify.css"
 interface props {
     channelInfo: Channel[];
 }
-interface User {
-    _id: string;
-}
 export default function ChannelInfo({ channelInfo }: props) {
 
 
@@ -17,11 +14,7 @@ export default function ChannelInfo({ channelInfo }: props) {
     const [isEditable, setIsEditable] = useState(false);
     const [editeButton, setEditeButton] = useState(false);
     // =============================data update =========================
-    const userString = localStorage.getItem('user');
-    let user: User;
-    if (userString) {
-        user = JSON.parse(userString);
-    }
+  
 
     type ChannelType = "Private" | "Public" | "Conversation";
     const [data, setData] = useState({
@@ -30,7 +23,6 @@ export default function ChannelInfo({ channelInfo }: props) {
         type: "Public" as ChannelType,
         description: '',
         bannedWords: [] as string[],
-        moderator: '',
     });
 
     useEffect(() => {
@@ -38,12 +30,11 @@ export default function ChannelInfo({ channelInfo }: props) {
             setData({
                 name: channelInfo[0].name || '',
                 expirationTime: channelInfo[0].expirationTime
-                    ? channelInfo[0].expirationTime.toISOString().slice(0, 16)
+                    ? channelInfo[0].expirationTime
                     : '',
                 type: channelInfo[0].type || 'public',
                 description: channelInfo[0].description || '',
                 bannedWords: channelInfo[0].bannedWords || '',
-                moderator: user?._id,
             });
         }
     }, [channelInfo]);
@@ -56,11 +47,9 @@ export default function ChannelInfo({ channelInfo }: props) {
     // ==================================================================
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
-        const updatedData = {
-            ...data,
-            expirationTime: data.expirationTime ? new Date(data.expirationTime) : undefined,
-        };
-        await editeChannel(updatedData, channelInfo[0]?._id);
+        console.log(data.expirationTime);
+        
+        await editeChannel(data, channelInfo[0]?._id);
         toast.success('Channel updated successfully!', { position: 'bottom-right' });
     };
     // =======================================================

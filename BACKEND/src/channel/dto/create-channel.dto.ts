@@ -24,9 +24,8 @@ export class CreateChannelDto {
     @IsDate()
     scheduledTime?: Date;
 
-    @IsOptional()
-    @IsDate()
-    expirationTime?: Date;
+ 
+    expirationTime: Date;
 
     @IsOptional()
     moderator: Types.ObjectId;

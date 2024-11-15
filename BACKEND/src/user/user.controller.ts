@@ -56,6 +56,21 @@ export class UserController {
     }
   }
 
+  @Get(':id/friends')
+  async getFriends(
+    @Param('id')
+    id: string,
+  ): Promise<User[]> {
+    try {
+      return await this.userService.getFriends(id);
+    } catch (error) {
+      throw new HttpException(
+        'Failed to fetch friends',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @Get(':id')
   async getUser(
     @Param('id')

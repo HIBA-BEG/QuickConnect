@@ -93,6 +93,10 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
       setFriendRequests(prev => prev.filter(req => req._id !== requestId));
       // console.log('Friend request accepted');
 
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const updatedUser = await userService.getUserById(user._id);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+
       await Swal.fire({
         icon: 'success',
         title: 'Friend Request Accepted!',

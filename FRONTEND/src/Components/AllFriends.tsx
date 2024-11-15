@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBarComponent from './SearchBar';
 import defaultProfileIcon from '../profileicon.jpg';
+import { User, userService } from '../Api/User.service';
 
 const Friends = styled.div`
   display: flex;
@@ -38,35 +39,111 @@ const GroupInfo = styled.div`
   flex-direction: column;
 `;
 
+const LoadingState = styled.div`
+  padding: 20px;
+  text-align: center;
+  color: #666;
+`;
+
+const ErrorState = styled.div`
+  padding: 20px;
+  text-align: center;
+  color: #dc3545;
+`;
+
+const EmptyState = styled.div`
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+`;
+
+const StatusIndicator = styled.span<{ status: string }>`
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+  background-color: ${props =>
+    props.status === 'online' ? '#28a745' :
+      props.status === 'busy' ? '#dc3545' :
+        '#666'
+  };
+`;
+
 interface AllChatProps {
-  onFriendselect: (FriendName: string) => void;
+  onFriendselect: (friendId: string) => void;
   currentUserId: string;
 }
 
 const AllChatFiends: React.FC<AllChatProps> = ({ onFriendselect, currentUserId }) => {
-  const [activeGroup, setActiveGroup] = useState<string | null>(null); 
+  const [activeGroup, setActiveGroup] = useState<string | null>(null);
+  const [friends, setFriends] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleFriendselect = (FriendName: string) => {
-    setActiveGroup(FriendName); 
-    onFriendselect(FriendName); 
+  useEffect(() => {
+    const fetchFriends = async () => {
+      setIsLoading(true);
+      try {
+        const friendsList = await userService.getUserFriends(currentUserId);
+        console.log('Fetched friends:', friendsList);
+        setFriends(friendsList);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching friends:', err);
+        setError('Failed to load friends');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (currentUserId) {
+      fetchFriends();
+    }
+  }, [currentUserId]);
+
+  const handleFriendselect = (friendId: string) => {
+    setActiveGroup(friendId);
+    onFriendselect(friendId);
   };
+
+  if (isLoading) return <div>Loading friends...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <Friends>
       <SearchBarComponent currentUserId={currentUserId} />
-      {['Friend 1', 'Friend 2', 'Friend 3'].map((FriendName, index) => (
-        <FriendItem
-          key={index}
-          onClick={() => handleFriendselect(FriendName)} 
-          active={activeGroup === FriendName} 
-        >
-          <ProfileImage src={defaultProfileIcon} alt={`${FriendName} Profile`} />
-          <GroupInfo>
-            <h2>{FriendName}</h2>
-            <p>Last Message: Hello</p>
-          </GroupInfo>
-        </FriendItem>
-      ))}
+      {isLoading ? (
+        <LoadingState>Loading friends...</LoadingState>
+      ) : error ? (
+        <ErrorState>Error: {error}</ErrorState>
+      ) : friends.length === 0 ? (
+        <EmptyState>
+          <div>No friends yet</div>
+        </EmptyState>
+      ) : (
+        friends.map((friend) => (
+          <FriendItem
+            key={friend._id}
+            onClick={() => handleFriendselect(friend._id)}
+            active={activeGroup === friend._id}
+          >
+            <ProfileImage
+              src={friend.profilePicture || defaultProfileIcon}
+              alt={`${friend.firstName} Profile`}
+            />
+            <GroupInfo>
+              <h2>
+                <StatusIndicator status={friend.status} />
+                {`${friend.firstName} ${friend.lastName}`}
+              </h2>
+              <p>@{friend.username}</p>
+              <small>{new Date(friend.lastSeen).toLocaleString()}</small>
+            </GroupInfo>
+          </FriendItem>
+        ))
+      )}
     </Friends>
   );
 };

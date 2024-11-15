@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import { TbClockHour5 } from "react-icons/tb";
 
 interface NotificationProps {
   sender: string;
   type: string;
   message: string;
   timestamp: string;
+  onAccept?: () => void;
+  onReject?: () => void;
 }
 
 const NotificationCard = styled.div`
@@ -26,18 +29,21 @@ const Badge = styled.span<{ type: string }>`
   font-size: 12px;
   color: white;
   background-color: ${({ type }) =>
-    type === 'Joined New User' ? '#8A2BE2' :
-    type === 'Message' ? '#4B4DFF' :
-    type === 'Invitation' ? '#6633FF' : '#333'};
+    type === 'Friend Request' ? '#7E3A7D' :
+    (type === 'Message' || type === 'Invitation') ? '#7678ED' : 
+    '#333'};
 `;
 
-const Message = styled.p`
+const Message = styled.p` 
   font-size: 14px;
   color: #333;
   margin: 10px 0;
 `;
 
 const Timestamp = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 12px;
   color: #888;
 `;
@@ -61,20 +67,20 @@ const Button = styled.button<{ color: string }>`
   }
 `;
 
-const NotificationItem: React.FC<NotificationProps> = ({ type,sender, message, timestamp }) => {
+const NotificationItem: React.FC<NotificationProps> = ({ type,sender, message, timestamp, onAccept, onReject }) => {
   return (
     <NotificationCard>
       <div className='flex flex-col'>
         <Badge type={type}>{type}</Badge>
         <Message><strong>{sender}</strong> {message}</Message>
-        <Timestamp>{timestamp}</Timestamp>
+        <Timestamp><TbClockHour5 />{timestamp}</Timestamp>
       </div>
 
       {/* Conditionally render buttons only if the type is not 'Message' */}
       {type !== 'Message' && (
         <Actions>
-          <Button color="#28a745">Accept</Button>
-          <Button color="#dc3545">Refuse</Button>
+          <Button color="#28a745"  onClick={onAccept}>Accept</Button>
+          <Button color="#dc3545" onClick={onReject}>Refuse</Button>
         </Actions>
       )}
     </NotificationCard>

@@ -62,6 +62,32 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
   const [isGroupChat, setIsGroupChat] = useState(true);
   const [socket, setSocket] = useState<any>(null);
 
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    // console.log('User localStorage ', user);
+
+    const fetchFriendRequests = async () => {
+
+      setIsLoading(true);
+      try {
+        const requests = await userService.getPendingFriendRequests(user._id);
+        // console.log('Fetched requests ', requests);
+
+        const pendingRequests = requests.filter(req => req.status === "Pending");
+        console.log('Pending requests:', pendingRequests);
+
+        setFriendRequests(pendingRequests);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load friend requests');
+        console.error('Err fetchFriendRequests:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFriendRequests();
+  }, []);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -202,6 +228,10 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
     setIsGroupChat((prev) => !prev);
   };
 
+  const sortedFriendRequests = [...friendRequests].sort((a, b) => {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
   return (
     <ContainerForAll>
       <NotificationContainer>
@@ -214,7 +244,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
           <EmptyState>No new notifications</EmptyState>
         )}
 
-        {friendRequests.map((request) => (
+        {sortedFriendRequests.map((request) => (
           <NotificationItem
             key={request._id}
             type="Friend Request"

@@ -4,6 +4,7 @@ import { FriendRequest, RequestStatus } from './entities/friend-request.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/user/entities/user.entity';
+import { WebsocketService } from 'src/websocket/websocket.service';
 
 @Injectable()
 export class FriendRequestService {
@@ -12,6 +13,8 @@ export class FriendRequestService {
     private friendRequestModel: Model<FriendRequest>,
     @InjectModel(User.name)
     private userModel: Model<User>,
+    private websocketService: WebsocketService,
+
   ) { }
 
   async create(createFriendRequestDto: CreateFriendRequestDto): Promise<FriendRequest> {
@@ -33,7 +36,15 @@ export class FriendRequestService {
       ...createFriendRequestDto,
       status: RequestStatus.PENDING,
     });
-    return await newRequest.save();
+
+    const savedRequest = await newRequest.save();
+    
+    this.websocketService.sendFriendRequest(
+      savedRequest.to._id.toString(),
+      savedRequest
+    );
+
+    return savedRequest;
   }
 
   async findAll(): Promise<FriendRequest[]> {
@@ -42,7 +53,7 @@ export class FriendRequestService {
 
   async findPendingRequests(userId: string): Promise<FriendRequest[]> {
     return this.friendRequestModel.find({
-      to: userId,
+      'to._id': userId,
       status: RequestStatus.PENDING,
     }).populate('from to');
   }

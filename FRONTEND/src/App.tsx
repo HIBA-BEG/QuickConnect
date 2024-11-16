@@ -8,6 +8,8 @@ import ProtectedRoute from './Utils/ProtectedRoute';
 import VideoCall from './Components/VideoCall';
 import IndexChannel from './pages/Channel/IndexChannel';
 import ChannelProvider from './Contexts/ChannelContext';
+import AllChatFiends from './Components/AllFriends';
+import AllFreinds from './pages/friends/AllFreinds';
 
 function App() {
   return (
@@ -38,6 +40,14 @@ function App() {
               <ChannelProvider>
                 <IndexChannel />
               </ChannelProvider>
+            </ProtectedRoute>
+          } />
+        <Route
+          path="/friends" element={
+            <ProtectedRoute>
+              
+                <AllFreinds />
+              
             </ProtectedRoute>
           } />
 

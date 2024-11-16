@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import PopUpGroups from './PopUpGroups'
 import { User } from '../../Types/User';
 
-interface FriendProps {
-    friend: User;
+interface UserProps {
+    user: User;
   }
-export default function Friend({ friend }: FriendProps) {
+export default function SuggestionFreinds({ user }: UserProps) {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     const handleOpenPopup = () => {
@@ -33,12 +33,12 @@ export default function Friend({ friend }: FriendProps) {
             <div className='flex justify-around items-center'>
 
                 <div className="pt-10 pb-4 px-4 ">
-                    <h2 className="text-lg font-semibold text-gray-800">{friend.firstName} {friend.lastName}</h2>
-                    <p className="text-sm text-gray-500">{friend.username}</p>
+                    <h2 className="text-lg font-semibold text-gray-800">{user.firstName} {user.lastName}</h2>
+                    <p className="text-sm text-gray-500">{user.username}</p>
                 </div>
-                <div className=" flex px-4 py-2  ">
+                <div className="px-4 py-2 ">
                     <button onClick={handleOpenPopup} className="text-sm bg-green-600 hover:bg-green-700 text-white font-semibold border rounded-md py-1 px-2 mr-2">Invit <span className='font-bold'>+</span></button>
-                    <button className=" flex items-center cursor-default text-sm bg-gray-400  text-white font-semibold border rounded-md py-1 px-2"> <span className='pr-3'>Friend</span>  <svg xmlns="http://www.w3.org/2000/svg" height="14" width="12.25" viewBox="0 0 448 512"><path fill="#ffffff" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg></button>
+                    <button className="text-sm bg-gray-400 hover:bg-gray-500 text-white font-semibold border rounded-md py-1 px-2">Add Friend</button>
 
                 </div>
             </div>

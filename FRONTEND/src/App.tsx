@@ -45,9 +45,9 @@ function App() {
         <Route
           path="/friends" element={
             <ProtectedRoute>
-              
+              <ChannelProvider>
                 <AllFreinds />
-              
+                </ChannelProvider>
             </ProtectedRoute>
           } />
 

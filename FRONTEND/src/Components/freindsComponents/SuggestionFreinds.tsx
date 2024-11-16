@@ -7,9 +7,11 @@ interface UserProps {
   }
 export default function SuggestionFreinds({ user }: UserProps) {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [userId , setUserId] = useState<string | number>('')
 
-    const handleOpenPopup = () => {
 
+    const handleOpenPopup = (id: string | number) => {
+        setUserId(id)
         setIsPopupOpen( !isPopupOpen );
     };
 
@@ -37,7 +39,7 @@ export default function SuggestionFreinds({ user }: UserProps) {
                     <p className="text-sm text-gray-500">{user.username}</p>
                 </div>
                 <div className="px-4 py-2 ">
-                    <button onClick={handleOpenPopup} className="text-sm bg-green-600 hover:bg-green-700 text-white font-semibold border rounded-md py-1 px-2 mr-2">Invit <span className='font-bold'>+</span></button>
+                    <button onClick={()=>handleOpenPopup(user._id)} className="text-sm bg-green-600 hover:bg-green-700 text-white font-semibold border rounded-md py-1 px-2 mr-2">Invit <span className='font-bold'>+</span></button>
                     <button className="text-sm bg-gray-400 hover:bg-gray-500 text-white font-semibold border rounded-md py-1 px-2">Add Friend</button>
 
                 </div>
@@ -46,6 +48,7 @@ export default function SuggestionFreinds({ user }: UserProps) {
             <PopUpGroups
                 onOpen={isPopupOpen}
                 onClose={handleClosePopup}
+                userId={userId}
             />
 
 

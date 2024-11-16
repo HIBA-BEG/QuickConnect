@@ -4,12 +4,14 @@ import { User } from '../../Types/User';
 
 interface FriendProps {
     friend: User;
+    
   }
 export default function Friend({ friend }: FriendProps) {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [userId , setUserId] = useState<string | number>('')
 
-    const handleOpenPopup = () => {
-
+    const handleOpenPopup = (id: string | number) => {
+        setUserId(id)
         setIsPopupOpen( !isPopupOpen );
     };
 
@@ -37,7 +39,7 @@ export default function Friend({ friend }: FriendProps) {
                     <p className="text-sm text-gray-500">{friend.username}</p>
                 </div>
                 <div className=" flex px-4 py-2  ">
-                    <button onClick={handleOpenPopup} className="text-sm bg-green-600 hover:bg-green-700 text-white font-semibold border rounded-md py-1 px-2 mr-2">Invit <span className='font-bold'>+</span></button>
+                    <button onClick={()=>handleOpenPopup(friend._id)} className="text-sm bg-green-600 hover:bg-green-700 text-white font-semibold border rounded-md py-1 px-2 mr-2">Invit <span className='font-bold'>+</span></button>
                     <button className=" flex items-center cursor-default text-sm bg-gray-400  text-white font-semibold border rounded-md py-1 px-2"> <span className='pr-3'>Friend</span>  <svg xmlns="http://www.w3.org/2000/svg" height="14" width="12.25" viewBox="0 0 448 512"><path fill="#ffffff" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg></button>
 
                 </div>
@@ -46,6 +48,7 @@ export default function Friend({ friend }: FriendProps) {
             <PopUpGroups
                 onOpen={isPopupOpen}
                 onClose={handleClosePopup}
+                userId={userId}
             />
 
 

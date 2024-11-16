@@ -12,9 +12,9 @@ export class ChannelController {
     return this.channelService.create(createChannelDto);
   }
 
-  @Get()
-  findAll() {
-    return this.channelService.findAll();
+  @Get('modertor/:userId')
+  findAll(@Param('userId') userId: string) {
+    return this.channelService.findAll(userId);
   }
 
   @Get(':id')

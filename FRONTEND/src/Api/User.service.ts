@@ -12,6 +12,7 @@ export interface User {
   lastName: string;
   username: string;
   email: string;
+  phoneNumber: string;
   status: string;
   channels: any[];
   friends: any[];
@@ -176,7 +177,7 @@ export const userService = {
         console.log('No friends found for user');
         return [];
       }
-      
+
       const friendPromises = user.friends.map(friendId =>
         userService.getUserById(friendId.toString())
       );
@@ -189,4 +190,74 @@ export const userService = {
       throw error;
     }
   },
+
+  updateUser: async (userId: string, userData: Partial<User>): Promise<User> => {
+    try {
+      const response = await fetch(`${apiUrl}/user/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const updatedUser = await response.json();
+
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
+    }
+  },
+
+  deleteUser: async (userId: string): Promise<void> => {
+    try {
+      const response = await fetch(`${apiUrl}/user/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to delete user');
+      }
+
+      localStorage.clear();
+
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
+  },
+
+  uploadProfilePicture: async (userId: string, file: File): Promise<User> => {
+    try {
+      const formData = new FormData();
+      formData.append('profilePicture', file);
+
+      const response = await fetch(`${apiUrl}/user/${userId}/profile-picture`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const updatedUser = await response.json();
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      throw error;
+    }
+  }
+  
 };

@@ -8,6 +8,7 @@ import ProtectedRoute from './Utils/ProtectedRoute';
 import VideoCall from './Components/VideoCall';
 import IndexChannel from './pages/Channel/IndexChannel';
 import ChannelProvider from './Contexts/ChannelContext';
+import MyProfile from './pages/Users/MyProfile';
 
 function App() {
   return (
@@ -40,6 +41,14 @@ function App() {
               </ChannelProvider>
             </ProtectedRoute>
           } />
+
+        <Route 
+          path='MyProfile' element= {
+            <ProtectedRoute>
+              <MyProfile />
+            </ProtectedRoute>
+          }
+        />
 
         {/* <Route path="/users" element={<Main />} /> */}
         <Route path="/video" element={<VideoCall />} />

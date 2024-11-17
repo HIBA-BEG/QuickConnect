@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,16 +9,19 @@ import {
   Param,
   Post,
   Put,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create.dto';
 import { UpdateUserDto } from './dto/update.dto';
 import { LoginDto } from './dto/login.dto';
+import { FastifyRequest } from 'fastify';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) { }
 
   @Get()
   async getAllUsers(): Promise<User[]> {
@@ -40,7 +44,7 @@ export class UserController {
     return this.userService.login(loginDto);
   }
 
-  
+
   @Post('/logout')
   async logout(
     @Body('userId') userId: string,
@@ -96,5 +100,33 @@ export class UserController {
   ): Promise<User> {
     return this.userService.deleteById(id);
   }
+
+  @Post(':id/profile-picture')
+  async uploadProfilePicture(
+    @Param('id') id: string,
+    @Req() request: FastifyRequest
+  ) {
+    try {
+      const file = await request.file();
+      if (!file) {
+        throw new BadRequestException('No file uploaded');
+      }
   
+      const buffer = await file.toBuffer();
+      const fileData = {
+        originalname: file.filename,
+        mimetype: file.mimetype,
+        buffer: buffer,
+        size: buffer.length
+      };
+  
+      return this.userService.updateProfilePicture(id, fileData);
+    } catch (error) {
+      throw new HttpException(
+        'Failed to upload profile picture',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
 }

@@ -4,6 +4,7 @@ import { logoutUser } from '../Api/Auth.service';
 import { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { IoMdArrowDropdown } from "react-icons/io";
+import quickConnectLogo from '../assets/QuickConnect-Logo.png'
 
 const SidebarContainer = styled.div`
   width: 100px;
@@ -20,7 +21,7 @@ const Logo = styled.div`
   margin-bottom: 20px;
   width: 60px;
   height: 60px;
-  background-color: #fff; 
+  // background-color: #fff; 
   border-radius: 50%; 
   display: flex;
   justify-content: center;
@@ -119,7 +120,9 @@ const Sidebar: React.FC = () => {
   };
   return (
     <SidebarContainer>
-      <Logo>Logo</Logo>
+      <Logo>
+        <img src={quickConnectLogo} alt="" />
+      </Logo>
       <div className='flex flex-col m-auto'>
         <Icon onClick={() => navigate('/users')}>
           <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
@@ -133,7 +136,7 @@ const Sidebar: React.FC = () => {
           </svg>
           <StyledParagraph>Messages</StyledParagraph>
         </Icon>
-        <Icon>
+        <Icon onClick={() => navigate('/friends')}>
           <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
             <rect width="50" height="50" fill="url(#pattern0_19_2)" />
             <defs>

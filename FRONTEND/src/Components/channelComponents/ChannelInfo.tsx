@@ -62,7 +62,7 @@ export default function ChannelInfo({ channelInfo }: props) {
         try {
             const updatedChannel = await editeChannel(data, channelInfo[0]?._id);
             if (updateChannel) {
-                updateChannel(updatedChannel); 
+                updateChannel(updatedChannel);
                 toast.success('Channel updated successfully!', { position: 'bottom-right' });
             }
         } catch (error) {
@@ -86,9 +86,9 @@ export default function ChannelInfo({ channelInfo }: props) {
         try {
             await deleteChannel(toDelete);
             if (removeChannel) {
-                removeChannel(toDelete); 
+                removeChannel(toDelete);
                 toast.success('Channel deleted successfully!', { position: 'bottom-right' });
-            } 
+            }
             setIsPopupOpen(false);
         } catch (error) {
             console.error("Error deleting channel:", error);

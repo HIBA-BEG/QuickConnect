@@ -10,5 +10,6 @@ export const allInvitation = async () => {
       }
     const user: User = JSON.parse(userString);
     const response = await api.get(`/invitation/pending/${user._id}`);
+    console.log('all requests:', response.data);
     return response.data;
 };

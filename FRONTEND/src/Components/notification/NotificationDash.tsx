@@ -94,6 +94,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
     const fetchInvitation = async () => {
       try {
         const requests = await allInvitation();
+
         const pendingInvitation = requests.filter((req: any) => req.status === "Pending");
         setInvitation(pendingInvitation)
         setError(null);
@@ -142,6 +143,27 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
         position: 'top-end',
         showConfirmButton: false,
         timer: 3000
+      });
+    });
+
+    // =====================invitation==================
+    newSocket.on('invitation', (invitation) => {
+      console.log('Received group invitation via WebSocket:', invitation);
+
+      Swal.fire({
+        icon: 'info',
+        title: 'New Group Invitation',
+        text: `${invitation.from.firstName} ${invitation.from.lastName} invited you to join the group: ${invitation.channel.name}`,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+      });
+
+      // Mettre à jour l'état des invitations, si vous voulez gérer une liste d'invitations
+      setInvitation(prev => {
+        const newRequests = [...prev, invitation];
+        return newRequests;
       });
     });
 
@@ -255,6 +277,8 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 
+
+
   return (
     <ContainerForAll>
       <NotificationContainer>
@@ -285,8 +309,8 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
             sender={`${invitation.from.firstName} ${invitation.from.lastName}`}
             message={`@${invitation.from.username} sent you to join group / ${invitation.channel.name} `}
             timestamp={new Date(invitation.createdAt).toLocaleString()}
-            onAccept={() => handleAcceptRequest(invitation._id)}
-            onReject={() => handleRejectRequest(invitation._id)}
+          // onAccept={() => handleAcceptRequest()}
+          // onReject={() => handleRejectRequest()}
           />
         ))}
       </NotificationContainer>

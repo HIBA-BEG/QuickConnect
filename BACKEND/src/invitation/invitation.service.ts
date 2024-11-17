@@ -44,7 +44,7 @@ export class InvitationService {
     const savedRequest = await newRequest.save();
     
      this.websocketService.sendInvitation(
-      savedRequest.to.toString(),
+      savedRequest.to._id.toString(),
       savedRequest
   );
 
@@ -57,7 +57,7 @@ export class InvitationService {
 
   async findPendingInvitations(userId: string): Promise<Invitation[]> {
     return this.invitationModel.find({
-      to: userId,
+      'to._id': userId,
     }).populate('from to channel');
   }
 

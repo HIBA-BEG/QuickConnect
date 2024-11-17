@@ -5,13 +5,17 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create.dto';
 import { UpdateUserDto } from './dto/update.dto';
 import { LoginDto } from './dto/login.dto';
+import { MinioService } from 'nestjs-minio-client';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<User>,
-  ) {}
+    private readonly minioClient: MinioService
+  ) {
+    this.initializeBucket();
+  }
 
   async findAll(): Promise<User[]> {
     const users = await this.userModel.find();
@@ -93,12 +97,50 @@ export class UserService {
       .findById(userId)
       .populate('friends', 'firstName lastName username')
       .exec();
-  
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
-  
-    return user.friends;  // Corrected here
+
+    return user.friends;
   }
+
+  private async initializeBucket() {
+    try {
+      const bucketExists = await this.minioClient.client.bucketExists('quickconnect-profilepic');
+      if (!bucketExists) {
+        await this.minioClient.client.makeBucket('quickconnect-profilepic');
+        console.log('Bucket created successfully');
+      }
+    } catch (error) {
+      console.error('Error initializing bucket:', error);
+    }
+  }
+
+  async updateProfilePicture(userId: string, file: any) {
+    try {
+      const filename = `${userId}-${Date.now()}.${file.originalname.split('.').pop()}`;
   
+      await this.minioClient.client.putObject(
+        'quickconnect-profilepic',
+        filename,
+        file.buffer,
+        file.size,
+        { 'Content-Type': file.mimetype }
+      );
+  
+      const imageUrl = await this.minioClient.client.presignedGetObject(
+        'quickconnect-profilepic',
+        filename
+      );
+  
+      return this.userModel.findByIdAndUpdate(
+        userId,
+        { profilePicture: imageUrl },
+        { new: true }
+      );
+    } catch (error) {
+      throw new Error('Failed to upload profile picture');
+    }
+  }
 }

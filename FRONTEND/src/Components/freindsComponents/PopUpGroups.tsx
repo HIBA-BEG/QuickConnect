@@ -5,6 +5,8 @@ import { Channel } from '../../Types/Channel';
 import { addInvitation } from '../../Api/invitationAPI/addInvetation';
 import Swal from 'sweetalert2';
 import { io } from 'socket.io-client';
+import { userService } from '../../Api/User.service';
+import { getChannel } from '../../Api/channelAPI/getChannelApi';
 
 export default function PopUpGroups({ onOpen, onClose, userId }: any) {
 
@@ -45,12 +47,21 @@ export default function PopUpGroups({ onOpen, onClose, userId }: any) {
 
     const handleInvitation = async (itemId: string | number) => {
 
+        const toUser = await userService.getUserById(userId);
+        const channel = await getChannel(itemId)
+
         try {
             const invitation = {
-                to: userId, 
-                from: user._id, 
-                channel: String(itemId),
+                to: toUser, 
+                from: user, 
+                channel: channel,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                __v: 0,
             };
+
+            console.log(invitation);
+            
     
             await addInvitation(invitation);
     

@@ -9,10 +9,19 @@ export class InvitationController {
 
   @Post()
   async create(
-    @Body(ValidationPipe)
+    @Body()
     createInvitationDto: CreateInvitationDto
-  ) {  return await this.invitationService.create(createInvitationDto);}
-  
+  ) {
+    try {
+      return await this.invitationService.create(createInvitationDto);
+    } catch (error) {
+      throw new HttpException(
+        'Failed to create friend request',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
 
   @Get()
   async findAll() {

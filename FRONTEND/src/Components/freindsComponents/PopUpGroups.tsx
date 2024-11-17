@@ -28,7 +28,7 @@ export default function PopUpGroups({ onOpen, onClose , userId }: any) {
                             <Groups name={item.name} />
 
                             <button onClick={()=>{setGroupId(item._id)}} className='mr-5 rounded-md font-medium text-white py-1 px-9 bg-green-600'>
-                                Invit
+                                Invit 
                             </button>
                         </div>
                     ))

@@ -12,6 +12,7 @@ export interface User {
   lastName: string;
   username: string;
   email: string;
+  phoneNumber: string;
   status: string;
   channels: any[];
   friends: any[];
@@ -189,7 +190,7 @@ export const userService = {
       throw error;
     }
   },
-  
+
   updateUser: async (userId: string, userData: Partial<User>): Promise<User> => {
     try {
       const response = await fetch(`${apiUrl}/user/${userId}`, {
@@ -235,4 +236,28 @@ export const userService = {
       throw error;
     }
   },
+
+  uploadProfilePicture: async (userId: string, file: File): Promise<User> => {
+    try {
+      const formData = new FormData();
+      formData.append('profilePicture', file);
+
+      const response = await fetch(`${apiUrl}/user/${userId}/profile-picture`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const updatedUser = await response.json();
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      throw error;
+    }
+  }
+  
 };

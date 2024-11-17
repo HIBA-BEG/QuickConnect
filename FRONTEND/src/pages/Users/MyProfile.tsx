@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../../Components/Sidebar';
 import { User, userService } from '../../Api/User.service';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import defaultProfileIcon from '../../profileicon.jpg';
+
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -133,9 +135,21 @@ const ProfileImage = styled.div`
     height: 100%;
     object-fit: cover;
   }
+
+&:hover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+cursor: pointer;
+}
 `;
 
 const UploadButton = styled.button`
+  display: inline-block;
   background-color: #7289DA;
   color: white;
   border: none;
@@ -207,11 +221,13 @@ const Profile: React.FC = () => {
     const navigate = useNavigate();
 
 
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         username: '',
-        email: ''
+        email: '',
+        phoneNumber: ''
     });
 
 
@@ -231,9 +247,10 @@ const Profile: React.FC = () => {
                     firstName: userData.firstName,
                     lastName: userData.lastName,
                     username: userData.username,
-                    email: userData.email
+                    email: userData.email,
+                    phoneNumber: userData.phoneNumber
                 });
-                
+
                 // const friends = await userService.getUserFriends(user._id);
 
             } catch (error) {
@@ -314,7 +331,7 @@ const Profile: React.FC = () => {
                     'Your profile has been deleted.',
                     'success'
                 );
-                
+
                 navigate('/');
             }
         } catch (err) {
@@ -326,6 +343,28 @@ const Profile: React.FC = () => {
         }
     };
 
+    const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file || !userData?._id) return;
+
+        try {
+            const updatedUser = await userService.uploadProfilePicture(userData._id, file);
+            setUserData(updatedUser);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Profile picture updated!',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Upload failed',
+                text: 'Could not upload profile picture'
+            });
+        }
+    };
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
@@ -403,6 +442,15 @@ const Profile: React.FC = () => {
                                 readOnly={!isEditable}
                             />
                         </InputGroup>
+                        <InputGroup>
+                            <label>Phone Number:</label>
+                            <Input
+                                name="phoneNumber"
+                                value={formData.phoneNumber}
+                                onChange={handleInputChange}
+                                readOnly={!isEditable}
+                            />
+                        </InputGroup>
                         {isEditable && (
                             <ButtonContainer>
                                 <UpdateButton type='submit'>
@@ -411,7 +459,7 @@ const Profile: React.FC = () => {
                             </ButtonContainer>
                         )}
                     </form>
-                    
+
                 </UserInfo>
 
                 <CommentsSection>
@@ -432,9 +480,18 @@ const Profile: React.FC = () => {
             <SideContent>
                 <ProfileCard>
                     <ProfileImage>
-                        <img src="/default-profile.jpg" alt="Profile" />
+                        <img src={userData?.profilePicture || defaultProfileIcon} alt="Profile" />
                     </ProfileImage>
-                    <UploadButton>Upload Image</UploadButton>
+                    <UploadButton as="label" htmlFor="profilePicture">
+                        Upload Image
+                        <input
+                            type="file"
+                            id="profilePicture"
+                            onChange={handleImageUpload}
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                        />
+                    </UploadButton>
                     <Stats>
                         <div>
                             <h3>200</h3>

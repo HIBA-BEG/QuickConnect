@@ -176,7 +176,7 @@ export const userService = {
         console.log('No friends found for user');
         return [];
       }
-      
+
       const friendPromises = user.friends.map(friendId =>
         userService.getUserById(friendId.toString())
       );
@@ -186,6 +186,52 @@ export const userService = {
       return friends;
     } catch (error) {
       console.error('Error fetching user friends:', error);
+      throw error;
+    }
+  },
+  
+  updateUser: async (userId: string, userData: Partial<User>): Promise<User> => {
+    try {
+      const response = await fetch(`${apiUrl}/user/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const updatedUser = await response.json();
+
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
+    }
+  },
+
+  deleteUser: async (userId: string): Promise<void> => {
+    try {
+      const response = await fetch(`${apiUrl}/user/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to delete user');
+      }
+
+      localStorage.clear();
+
+    } catch (error) {
+      console.error('Error deleting user:', error);
       throw error;
     }
   },

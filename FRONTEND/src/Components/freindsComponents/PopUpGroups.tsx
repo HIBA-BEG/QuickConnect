@@ -49,7 +49,7 @@ export default function PopUpGroups({ onOpen, onClose, userId }: any) {
             const invitation = {
                 to: userId, 
                 from: user._id, 
-                channel: itemId,
+                channel: String(itemId),
             };
     
             await addInvitation(invitation);

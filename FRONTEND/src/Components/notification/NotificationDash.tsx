@@ -4,6 +4,8 @@ import NotificationItem from './NotificationItem';
 import { userService, User, FriendRequest } from '../../Api/User.service';
 import Swal from 'sweetalert2';
 import { io } from 'socket.io-client';
+import { allInvitation } from '../../Api/invitationAPI/allInvitation';
+import { Invitation } from '../../Types/invitation';
 
 const ContainerForAll = styled.div`
   flex: 2;
@@ -57,6 +59,7 @@ interface NotificationPageProps {
 
 const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) => {
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+  const [invitation, setInvitation] = useState<Invitation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isGroupChat, setIsGroupChat] = useState(true);
@@ -86,7 +89,24 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
       }
     };
 
+    // ===========================get all invitation===================
+
+    const fetchInvitation = async () => {
+      try {
+        const requests = await allInvitation();
+        const pendingInvitation = requests.filter((req: any) => req.status === "Pending");
+        setInvitation(pendingInvitation)
+        setError(null);
+      } catch (err) {
+        setError('Failed to load invitation');
+        console.error('Err fetchInvitation:', err);
+
+      }
+
+    }
+
     fetchFriendRequests();
+    fetchInvitation();
   }, []);
 
   useEffect(() => {
@@ -231,6 +251,9 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
   const sortedFriendRequests = [...friendRequests].sort((a, b) => {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
+  const sortedInvitation = [...invitation].sort((a, b) => {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
 
   return (
     <ContainerForAll>
@@ -240,7 +263,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
         {isLoading && <LoadingSpinner>Loading...</LoadingSpinner>}
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
-        {!isLoading && !error && friendRequests.length === 0 && (
+        {!isLoading && !error && friendRequests.length === 0 && invitation.length === 0 && (
           <EmptyState>No new notifications</EmptyState>
         )}
 
@@ -253,6 +276,17 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
             timestamp={new Date(request.createdAt).toLocaleString()}
             onAccept={() => handleAcceptRequest(request._id)}
             onReject={() => handleRejectRequest(request._id)}
+          />
+        ))}
+        {sortedInvitation.map((invitation) => (
+          <NotificationItem
+            key={invitation._id}
+            type="Invitation"
+            sender={`${invitation.from.firstName} ${invitation.from.lastName}`}
+            message={`@${invitation.from.username} sent you to join group / ${invitation.channel.name} `}
+            timestamp={new Date(invitation.createdAt).toLocaleString()}
+            onAccept={() => handleAcceptRequest(invitation._id)}
+            onReject={() => handleRejectRequest(invitation._id)}
           />
         ))}
       </NotificationContainer>

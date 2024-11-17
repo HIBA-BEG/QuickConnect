@@ -58,7 +58,6 @@ export class InvitationService {
   async findPendingInvitations(userId: string): Promise<Invitation[]> {
     return this.invitationModel.find({
       to: userId,
-      status: 'Pending',
     }).populate('from to channel');
   }
 

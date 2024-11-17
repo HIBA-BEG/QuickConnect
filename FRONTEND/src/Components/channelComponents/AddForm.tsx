@@ -77,7 +77,7 @@ export default function AddForm() {
 
                     <div className="mb-6">
                         <label className="block text-black font-semibold mb-2">Expiration Time</label>
-                        <input onChange={handleInputChange} name='expirationTime' type='datetime-local' placeholder='24 Nov 2024' className="bg-indigo-100 text-gray-800 p-3 rounded-md h-10 w-[100%]" />
+                        <input min={new Date().toISOString().slice(0, 16)} onChange={handleInputChange} name='expirationTime' type='datetime-local' placeholder='24 Nov 2024' className="bg-indigo-100 text-gray-800 p-3 rounded-md h-10 w-[100%]" />
 
                     </div>
 
@@ -100,7 +100,11 @@ export default function AddForm() {
                     </div>
 
                     <div className="mb-6">
-                        <label className="block text-black font-semibold mb-2">Banne World</label>
+                        <div className='flex '>
+
+                        <label className="block text-black font-semibold mb-2">Banne World</label> 
+                        <p className='text-sm pl-2 font-light text-gray-500'>(world1 <b className='text-black'>,</b> world2)</p>
+                        </div>
                         <textarea onChange={handleInputChange} name='bannedWords' className="bg-indigo-100 text-gray-700 p-3 rounded-md max-h-44 w-[100%]">
 
                         </textarea>

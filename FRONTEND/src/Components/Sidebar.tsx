@@ -6,7 +6,7 @@ import { FaArrowRight } from 'react-icons/fa';
 import { IoMdArrowDropdown } from "react-icons/io";
 import { userService, UserStatus } from '../Api/User.service';
 import Swal from 'sweetalert2';
-import chatlogo from '../chatlogo.png'
+import quickConnectLogo from '../assets/QuickConnect-Logo.png'
 
 const SidebarContainer = styled.div`
   width: 100px;
@@ -204,7 +204,7 @@ const Sidebar: React.FC = () => {
   return (
     <SidebarContainer>
       <Logo>
-        <img src={chatlogo} alt="logo" />
+        <img src={quickConnectLogo} alt="" />
       </Logo>
       <div className='flex flex-col m-auto'>
         <Icon onClick={() => navigate('/users')}>
@@ -219,7 +219,7 @@ const Sidebar: React.FC = () => {
           </svg>
           <StyledParagraph>Messages</StyledParagraph>
         </Icon>
-        <Icon>
+        <Icon onClick={() => navigate('/friends')}>
           <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
             <rect width="50" height="50" fill="url(#pattern0_19_2)" />
             <defs>

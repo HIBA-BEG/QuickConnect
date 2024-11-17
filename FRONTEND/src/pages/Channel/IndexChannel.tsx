@@ -62,19 +62,28 @@ export default function IndexChannel() {
                         </div>
 
                         <div className="w-full  flex flex-col  items-center overflow-y-auto h-72 overflow-auto">
-                            {channels.map((item: Channel, index: number) => (
-                                <div
-                                    key={index}
-                                    onClick={() => {
-                                        setMembers(item.members);
-                                        setChannelInfo([item])
-                                    }}
-                                    className='cursor-pointer'>
 
-                                    <Groups name={item.name} />
+
+
+
+                            {channels.length > 0 ?
+                                channels.map((item: Channel, index: number) => (
+                                    <div
+                                        key={index}
+                                        onClick={() => {
+                                            setMembers(item.members);
+                                            setChannelInfo([item])
+                                        }}
+                                        className='cursor-pointer'>
+
+                                        <Groups name={item.name} />
+                                    </div>
+
+                                )) :
+                                <div className='h-full flex items-center'>
+                                    <p>No Groups created</p>
                                 </div>
-
-                            ))}
+                            }
 
                         </div>
 

@@ -6,6 +6,8 @@ import Swal from 'sweetalert2';
 import { io } from 'socket.io-client';
 import { allInvitation } from '../../Api/invitationAPI/allInvitation';
 import { Invitation } from '../../Types/invitation';
+import { acceptedInvitation } from '../../Api/invitationAPI/acceptedInvetationApi';
+import { rejecteInvitation } from '../../Api/invitationAPI/rejectInvitationApi';
 
 const ContainerForAll = styled.div`
   flex: 2;
@@ -216,6 +218,40 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
       });
     }
   };
+  // ========================== acceptes invitation===================
+ const handleAcceptInvitation = async(requestId: string | number)=>{
+
+  try {
+
+    
+    await acceptedInvitation(requestId);
+    setInvitation(prev => prev.filter(req => req._id !== requestId));
+
+    await Swal.fire({
+      icon: 'success',
+      title: 'Invitation Accepted!',
+      text: 'You are now joind channel',
+      showConfirmButton: false,
+      timer: 1500,
+      position: 'top-end',
+      toast: true
+    });
+
+
+  } catch (error) {
+    console.error('Error accepting invitation:', error);
+
+    await Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Failed to accept invitation',
+      showConfirmButton: true,
+      position: 'center'
+    });
+  }
+
+
+ }
 
   const handleRejectRequest = async (requestId: string) => {
     try {
@@ -258,6 +294,41 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
     }
   };
 
+  // ========================rejected invetation=======================
+  const handleRejectInvitation = async(requestId: string | number)=>{
+
+    try {
+  
+      
+      await rejecteInvitation(requestId);
+      setInvitation(prev => prev.filter(req => req._id !== requestId));
+  
+      await Swal.fire({
+        icon: 'success',
+        title: 'Invitation Rejected!',
+        text: 'You are rejected this invitation',
+        showConfirmButton: false,
+        timer: 1500,
+        position: 'top-end',
+        toast: true
+      });
+  
+  
+    } catch (error) {
+      console.error('Error rejected invitation:', error);
+  
+      await Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Failed to rejected invitation',
+        showConfirmButton: true,
+        position: 'center'
+      });
+    }
+  
+  
+   }
+
   const handleFriendSelect = (friendId: string) => {
     console.log("Friend selected:", friendId);
   };
@@ -276,6 +347,9 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
   const sortedInvitation = [...invitation].sort((a, b) => {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
+
+  console.log(sortedInvitation);
+  
 
 
 
@@ -309,8 +383,8 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
             sender={`${invitation.from.firstName} ${invitation.from.lastName}`}
             message={`@${invitation.from.username} sent you to join group / ${invitation.channel.name} `}
             timestamp={new Date(invitation.createdAt).toLocaleString()}
-          // onAccept={() => handleAcceptRequest()}
-          // onReject={() => handleRejectRequest()}
+            onAccept={() => handleAcceptInvitation(invitation._id!)}
+            onReject={() => handleRejectInvitation(invitation._id!)}
           />
         ))}
       </NotificationContainer>

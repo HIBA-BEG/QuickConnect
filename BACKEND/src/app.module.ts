@@ -14,6 +14,8 @@ import { RewardModule } from './reward/reward.module';
 import { VideoCallGateway } from './video-call/video-call.gateway';
 import { ConversationsModule } from './conversation/conversation.module';
 import { ChatGateway } from './socket/socket.gateway';
+import { WebsocketModule } from './websocket/websocket.module';
+
 
 @Module({
   imports: [
@@ -31,6 +33,7 @@ import { ChatGateway } from './socket/socket.gateway';
     RatingModule,
     RewardModule,
     ConversationsModule,
+    WebsocketModule,
   ],
   controllers: [AppController],
   providers: [AppService,VideoCallGateway,ChatGateway],

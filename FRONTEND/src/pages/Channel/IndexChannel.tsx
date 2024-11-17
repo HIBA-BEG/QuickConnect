@@ -32,7 +32,7 @@ export default function IndexChannel() {
             <Sidebar />
             <div className='flex  w-[100vw] min-h-screen mx-2 my-5 gap-5'>
 
-                <div className='flex  bg-white h-[100%] w-[70%] rounded-md'>
+                <div className='flex  bg-white h-[100%] w-[70%] rounded-[30px]'>
                     <div className='w-[30%] h-[100%] flex items-center '>
                         <div className='flex flex-col  w-[100%] h-[80%] '>
                             <span className='ml-3'>
@@ -52,7 +52,7 @@ export default function IndexChannel() {
                 </div>
                 <div className=' flex flex-col gap-4 h-[100%] w-[30%]'>
 
-                    <div className='w-full h-1/2 bg-white rounded-md'>
+                    <div className='w-full h-1/2 bg-white rounded-[30px]'>
                         <div className='flex justify-around items-center mt-2'>
 
                             <h1 className='text-3xl font-medium'>MY Group</h1>
@@ -80,7 +80,7 @@ export default function IndexChannel() {
 
 
                     </div>
-                    <div className='w-full h-1/2 bg-[#DBDCFF] rounded-md'>
+                    <div className='w-full h-1/2 bg-[#DBDCFF] rounded-[30px]'>
                         <div className=' pl-16 mt-2'>
 
                             <h1 className='text-3xl font-medium'>{members.length} Members</h1>

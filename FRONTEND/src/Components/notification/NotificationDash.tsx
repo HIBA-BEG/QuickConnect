@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import NotificationItem from './NotificationItem';
 import { userService, User, FriendRequest } from '../../Api/User.service';
 import Swal from 'sweetalert2';
+import { io } from 'socket.io-client';
 
 const ContainerForAll = styled.div`
   flex: 2;
@@ -59,32 +60,59 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ currentUserId }) =>
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isGroupChat, setIsGroupChat] = useState(true);
+  const [socket, setSocket] = useState<any>(null);
+
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     // console.log('User localStorage ', user);
 
-    const fetchFriendRequests = async () => {
+    console.log('Setting up WebSocket for user:', user.username, user._id);
 
-      setIsLoading(true);
-      try {
-        const requests = await userService.getPendingFriendRequests(user._id);
-        // console.log('Fetched requests ', requests);
+    const newSocket = io('http://localhost:3001');
 
-        const pendingRequests = requests.filter(req => req.status === "Pending");
-        console.log('Pending requests:', pendingRequests);
+    newSocket.on('connect', () => {
+      // console.log('Connected to WebSocket server');
+      newSocket.emit('register', user._id);
+      // console.log('Emitted register event with userId:', user._id);
 
-        setFriendRequests(pendingRequests);
-        setError(null);
-      } catch (err) {
-        setError('Failed to load friend requests');
-        console.error('Err fetchFriendRequests:', err);
-      } finally {
-        setIsLoading(false);
-      }
+    });
+
+    newSocket.on('friendRequest', (request) => {
+      console.log('Received friend request via WebSocket:', request);
+
+      setFriendRequests(prev => {
+        // console.log('Previous requests:', prev);
+        const newRequests = [...prev, request];
+        // console.log('Updated requests:', newRequests);
+        return newRequests;
+      });
+
+      Swal.fire({
+        icon: 'info',
+        title: 'New Friend Request',
+        text: `${request.from.firstName} ${request.from.lastName} sent you a friend request`,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+      });
+    });
+
+    // newSocket.on('error', (error) => {
+    //   console.error('WebSocket error:', error);
+    // });
+
+    // newSocket.on('disconnect', () => {
+    //   console.log('Disconnected from WebSocket server');
+    // });
+
+    setSocket(newSocket);
+
+    return () => {
+      // console.log('Cleaning up WebSocket connection');
+      newSocket.close();
     };
-
-    fetchFriendRequests();
   }, []);
 
   const handleAcceptRequest = async (requestId: string) => {

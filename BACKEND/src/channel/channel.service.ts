@@ -16,9 +16,9 @@ export class ChannelService {
 
   // ======================findALL=======================
 
-  async findAll(): Promise<Channel[]> {
+  async findAll(userId: string): Promise<Channel[]> {
     const allChannel = await this.channelModel
-      .find()
+      .find({ moderator: userId })
       .populate('members')
       .populate('moderator')
 

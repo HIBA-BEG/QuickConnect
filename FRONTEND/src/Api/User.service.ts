@@ -60,6 +60,8 @@ export const userService = {
     }
   },
 
+
+
   sendFriendRequest: async (toUserId: string): Promise<void> => {
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
     const toUser = await userService.getUserById(toUserId);

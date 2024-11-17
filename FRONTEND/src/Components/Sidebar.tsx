@@ -4,6 +4,9 @@ import { logoutUser } from '../Api/Auth.service';
 import { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { IoMdArrowDropdown } from "react-icons/io";
+import { userService, UserStatus } from '../Api/User.service';
+import Swal from 'sweetalert2';
+import chatlogo from '../chatlogo.png'
 
 const SidebarContainer = styled.div`
   width: 100px;
@@ -20,7 +23,7 @@ const Logo = styled.div`
   margin-bottom: 20px;
   width: 60px;
   height: 60px;
-  background-color: #fff; 
+  // background-color: #fff; 
   border-radius: 50%; 
   display: flex;
   justify-content: center;
@@ -60,7 +63,7 @@ const StyledParagraph = styled.p`
 
 const ProfileDropdown = styled.div`
   position: absolute;
-  bottom: 100px;
+  bottom: 10px;
   left: 100%;
   background-color: #DBDCFF;
   border-radius: 5px;
@@ -75,7 +78,7 @@ const ProfileDropdown = styled.div`
 const DropdownOption = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
   padding: 8px 12px;
   cursor: pointer;
   color: black;
@@ -87,9 +90,49 @@ const DropdownOption = styled.div`
   }
 `;
 
+const StatusDropdown = styled.div`
+  position: absolute;
+  left: 100%;
+  background-color: #DBDCFF;
+  border-radius: 5px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 150px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+`;
+
+const StatusOption = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: black;
+  border-radius: 4px;
+  
+  &:hover {
+    background-color: #404447;
+    color: white;
+  }
+`;
+
+const StatusDot = styled.div<{ status: string }>`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: ${props => 
+    props.status === UserStatus.ONLINE ? '#44b700' :
+    props.status === UserStatus.BUSY ? '#ff3333' :
+    '#808080'};
+`;
+
+
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showStatusMenu, setShowStatusMenu] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -117,9 +160,52 @@ const Sidebar: React.FC = () => {
       navigate('/');
     }
   };
+
+  const handleStatusClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowStatusMenu(!showStatusMenu);
+  };
+
+
+  const handleStatusChange = async (status: UserStatus) => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!userData._id) return;
+
+      const updatedUser = await userService.updateStatus(userData._id, status);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      setShowProfileMenu(false);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Status Updated!',
+        text: `You changed your status to ${status}`,
+        showConfirmButton: false,
+        timer: 1500,
+        position: 'top-end',
+        toast: true
+      });
+
+    } catch (error) {
+      console.error('Failed to update status:', error);
+   
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Failed to update status',
+        timer: 1500,
+        position: 'top-end',
+        toast: true
+      });
+    }
+  };
+
   return (
     <SidebarContainer>
-      <Logo>Logo</Logo>
+      <Logo>
+        <img src={chatlogo} alt="logo" />
+      </Logo>
       <div className='flex flex-col m-auto'>
         <Icon onClick={() => navigate('/users')}>
           <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
@@ -180,9 +266,27 @@ const Sidebar: React.FC = () => {
               View Profile
               <FaArrowRight />
             </DropdownOption>
-            <DropdownOption onClick={() => navigate('/status')}>
+            <DropdownOption onClick={handleStatusClick} style={{ position: 'relative' }} >
               Change Status
               <IoMdArrowDropdown style={{ fontSize: '24px' }} />
+              
+              {showStatusMenu && (
+                <StatusDropdown>
+                  <StatusOption onClick={() => handleStatusChange(UserStatus.ONLINE)}>
+                    <StatusDot status={UserStatus.ONLINE} />
+                    Online
+                  </StatusOption>
+                  <StatusOption onClick={() => handleStatusChange(UserStatus.BUSY)}>
+                    <StatusDot status={UserStatus.BUSY} />
+                    Busy
+                  </StatusOption>
+                  <StatusOption onClick={() => handleStatusChange(UserStatus.OFFLINE)}>
+                    <StatusDot status={UserStatus.OFFLINE} />
+                    Offline
+                  </StatusOption>
+                </StatusDropdown>
+              )}
+              
             </DropdownOption>
           </ProfileDropdown>
         )}

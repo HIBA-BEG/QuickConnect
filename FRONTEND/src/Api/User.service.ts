@@ -258,6 +258,29 @@ export const userService = {
       console.error('Error uploading profile picture:', error);
       throw error;
     }
-  }
-  
+  },
+
+  updateStatus: async (userId: string, status: UserStatus): Promise<User> => {
+    try {
+      const response = await fetch(`${apiUrl}/user/${userId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const updatedUser = await response.json();
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating status:', error);
+      throw error;
+    }
+  },
+
 };

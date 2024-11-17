@@ -17,7 +17,7 @@ import { CreateUserDto } from './dto/create.dto';
 import { UpdateUserDto } from './dto/update.dto';
 import { LoginDto } from './dto/login.dto';
 import { FastifyRequest } from 'fastify';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateStatusDto } from './dto/update-status.dto';
 
 @Controller('user')
 export class UserController {
@@ -129,4 +129,19 @@ export class UserController {
     }
   }
 
+  @Put(':id/status')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() updateStatusDto: UpdateStatusDto
+  ): Promise<User> {
+    try {
+      return await this.userService.updateStatus(id, updateStatusDto.status);
+    } catch (error) {
+      throw new HttpException(
+        'Failed to update status',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+  
 }

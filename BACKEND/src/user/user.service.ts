@@ -143,4 +143,25 @@ export class UserService {
       throw new Error('Failed to upload profile picture');
     }
   }
+
+  async updateStatus(userId: string, status: UserStatus): Promise<User> {
+    try {
+      const user = await this.userModel.findByIdAndUpdate(
+        userId,
+        { 
+          status,
+          lastSeen: new Date()
+        },
+        { new: true }
+      );
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      return user;
+    } catch (error) {
+      throw new Error('Failed to update status');
+    }
+  }
 }

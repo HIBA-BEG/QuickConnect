@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/user/entities/user.entity';
 import { Channel } from 'src/channel/entities/channel.entity';
-// import { WebsocketService } from 'src/websocket/websocket.service';
+import { WebsocketService } from 'src/websocket/websocket.service';
 
 @Injectable()
 export class InvitationService {
@@ -16,7 +16,7 @@ export class InvitationService {
     private userModel: Model<User>,
     @InjectModel(Channel.name)
     private channelModel: Model<Channel>,
-    // private websocketService: WebsocketService,
+    private websocketService: WebsocketService,
 
   ) { }
 
@@ -31,7 +31,7 @@ export class InvitationService {
 
     if (existingRequest) {
       throw new HttpException(
-        'Friend request already exists',
+        'Invitation already exists',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -43,10 +43,10 @@ export class InvitationService {
 
     const savedRequest = await newRequest.save();
     
-    // this.websocketService.sendFriendRequest(
-    //   savedRequest.to._id.toString(),
-    //   savedRequest
-    // );
+     this.websocketService.sendInvitation(
+      savedRequest.to.toString(),
+      savedRequest
+  );
 
     return savedRequest;
   }

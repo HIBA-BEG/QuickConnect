@@ -45,13 +45,27 @@ export class WebsocketService {
     return { sent: false, socketId: null };
   }
 
+  sendInvitation(toUserId: string, invitation: any) {
+    console.log('Attempting to send invitation to user:', toUserId);
+    const socketId = this.userSockets.get(toUserId);
+
+    if (socketId && this.server) {
+      console.log('Found socket, sending invitation to:', socketId);
+      this.server.to(socketId).emit('invitation', invitation);
+      return { sent: true, socketId };
+    }
+
+    console.log('No socket found for user:', toUserId);
+    return { sent: false, socketId: null };
+  }
+
   remove(socketId: string) {
     for (const [userId, sid] of this.userSockets.entries()) {
       if (sid === socketId) {
         this.userSockets.delete(userId);
         console.log(`Removed socket for user: ${userId}`);
         console.log('Remaining connections:', Array.from(this.userSockets.entries()));
-        
+
         return `Socket removed for user ${userId}`;
       }
     }

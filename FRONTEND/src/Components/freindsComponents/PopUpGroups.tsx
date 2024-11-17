@@ -2,14 +2,82 @@ import React, { useContext, useEffect, useState } from 'react'
 import Groups from '../channelComponents/Groups';
 import { ChannelContext } from '../../Contexts/ChannelContext';
 import { Channel } from '../../Types/Channel';
+import { addInvitation } from '../../Api/invitationAPI/addInvetation';
+import Swal from 'sweetalert2';
+import { io } from 'socket.io-client';
 
-export default function PopUpGroups({ onOpen, onClose , userId }: any) {
+export default function PopUpGroups({ onOpen, onClose, userId }: any) {
 
     const channelContext = useContext(ChannelContext);
     const channels = channelContext?.channels || [];
 
-    const [groupId , setGroupId] = useState<string | number>()
-    // console.log('groupId:',groupId, 'userId:',userId)
+    const [groupId, setGroupId] = useState<string | string | number>()
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    useEffect(() => {
+        const socket = io('http://localhost:3001'); 
+    
+        socket.on('connect', () => {
+            console.log('WebSocket connecté');
+            socket.emit('register', user._id); 
+        });
+    
+        socket.on('groupInvitation', (invitation) => {
+            Swal.fire({
+                icon: 'info',
+                title: 'Nouvelle Invitation',
+                text: `Vous avez reçu une invitation pour rejoindre le groupe ${invitation.channelName}.`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+            });
+    
+            console.log('Invitation reçue:', invitation);
+        });
+    
+        return () => {
+            socket.disconnect();
+        };
+    }, [user._id]);
+
+    
+
+    const handleInvitation = async (itemId: string | number) => {
+
+        try {
+            const invitation = {
+                to: userId, 
+                from: user._id, 
+                channel: itemId,
+            };
+    
+            await addInvitation(invitation);
+    
+            Swal.fire({
+                icon: 'success',
+                title: 'Invitation envoyée',
+                text: 'L\'invitation a été envoyée avec succès.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+            });
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: 'Impossible d\'envoyer l\'invitation.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+            });
+            console.error(error);
+        }
+
+
+    }
 
     if (!onOpen) return null;
     return (
@@ -27,8 +95,8 @@ export default function PopUpGroups({ onOpen, onClose , userId }: any) {
                         <div key={index} className='bg-gray-300 rounded-md flex justify-between items-center mb-2'>
                             <Groups name={item.name} />
 
-                            <button onClick={()=>{setGroupId(item._id)}} className='mr-5 rounded-md font-medium text-white py-1 px-9 bg-green-600'>
-                                Invit 
+                            <button onClick={() => { handleInvitation(item._id) }} className='mr-5 rounded-md font-medium text-white py-1 px-9 bg-green-600'>
+                                Invit
                             </button>
                         </div>
                     ))

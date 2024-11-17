@@ -47,6 +47,12 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
     ) {
         return this.websocketService.sendFriendRequest(data.toUserId, data.request);
     }
+    @SubscribeMessage('invitation')
+    handleInvitation(
+        @MessageBody() data: { toUserId: string; invitation: any }
+    ) {
+        return this.websocketService.sendInvitation(data.toUserId, data.invitation);
+    }
 
     @SubscribeMessage('findAllWebsocket')
     findAll() {

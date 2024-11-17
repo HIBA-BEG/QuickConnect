@@ -5,7 +5,7 @@ import { InvitationController } from './invitation.controller';
 import { Invitation, InvitationSchema } from './entities/invitation.entity';
 import { User, UserSchema } from 'src/user/entities/user.entity';
 import { Channel, ChannelSchema } from 'src/channel/entities/channel.entity';
-// import { WebsocketModule } from 'src/websocket/websocket.module';
+import { WebsocketModule } from 'src/websocket/websocket.module';
 
 @Module({
     imports: [
@@ -14,7 +14,7 @@ import { Channel, ChannelSchema } from 'src/channel/entities/channel.entity';
             { name: User.name, schema: UserSchema },
             { name: Channel.name, schema: ChannelSchema },
         ]),
-        // WebsocketModule,
+        WebsocketModule,
     ],
     controllers: [InvitationController],
     providers: [InvitationService],

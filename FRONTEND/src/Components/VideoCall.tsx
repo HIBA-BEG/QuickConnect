@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Peer, { MediaConnection } from 'peerjs';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:3000'); 
+const socket = io('http://localhost:3001'); 
 
 const VideoCall = () => {
   const [peerId, setPeerId] = useState(''); 

@@ -86,4 +86,19 @@ export class UserService {
   async deleteById(id: string): Promise<User> {
     return await this.userModel.findByIdAndDelete(id);
   }
+
+
+  async getFriends(userId: string): Promise<User[]> {
+    const user = await this.userModel
+      .findById(userId)
+      .populate('friends', 'firstName lastName username')
+      .exec();
+  
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
+    return user.friends;  // Corrected here
+  }
+  
 }

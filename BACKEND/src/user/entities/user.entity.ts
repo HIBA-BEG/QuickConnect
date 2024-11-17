@@ -38,7 +38,7 @@ export class User extends Document {
   channels: Channel[];
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] })
-  friends: Types.ObjectId[];
+  friends: Types.Array<User>;
   
   @Prop({ default: Date.now })
   lastSeen: Date;

@@ -170,14 +170,17 @@ const FriendsChat: React.FC<FriendsChatProps> = ({ currentUserId }) => {
         text: newMessage,
         timestamp: new Date(),
       };
-
+  
       try {
+        await conversationService.createConversation(currentUserId, selectedFriend, [newMessageData]);
+  
+        // Emit to socket
         socket.emit('sendMessage', {
           senderId: currentUserId,
           receiverId: selectedFriend,
           message: newMessage,
         });
-
+  
         setMessages([...messages, newMessageData]);
         setNewMessage('');
       } catch (error) {
@@ -185,6 +188,7 @@ const FriendsChat: React.FC<FriendsChatProps> = ({ currentUserId }) => {
       }
     }
   };
+  
 
   return (
     <FriendsWithChat>
